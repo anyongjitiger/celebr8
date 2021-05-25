@@ -49,6 +49,7 @@ const Profile: React.FC<any> = ({navigation}) => {
           alignItems: 'center',
           backgroundColor: 'white',
           width: '100%',
+          marginTop: -2,
         }}>
         <View
           style={{
@@ -110,7 +111,7 @@ const Profile: React.FC<any> = ({navigation}) => {
             styles.rowContainer,
             {
               position: 'relative',
-              top: -35,
+              top: -40,
               borderRadius: 5,
               backgroundColor: 'white',
               width: '90%',
@@ -118,9 +119,9 @@ const Profile: React.FC<any> = ({navigation}) => {
               paddingVertical: 20,
               elevation: 4,
               shadowColor: '#000',
-              shadowOffset: {width: 4, height: 4},
-              shadowOpacity: 0.8,
-              shadowRadius: 6,
+              shadowOffset: {width: 2, height: 2},
+              shadowOpacity: 0.5,
+              shadowRadius: 3,
             },
           ]}>
           <View

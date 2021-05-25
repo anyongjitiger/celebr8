@@ -297,12 +297,20 @@ const Activity: React.FC<any> = ({route, navigation}) => {
               />
             </View>
             {contacts?.map((contact, index) => (
-              <NameAvatar
+              contact.picture === '' ? 
+              (<NameAvatar
                 key={index}
                 name={contact.name}
                 color={'#D3DCE6'}
                 style={{marginLeft: 10}}
-              />
+              />) : 
+              (<View style={{marginLeft: 10}} key={index}>
+                <Avatar
+                  size={40}
+                  rounded
+                  source={{uri:contact.picture}}
+                />
+              </View>)
             ))}
           </View>
         </View>
