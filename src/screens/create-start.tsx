@@ -37,7 +37,12 @@ const CreateStart: React.FC<any> = ({ navigation, ...restProps }) => {
     <View style={{ backgroundColor: '#E2EAEC' }}>
       <StatusBar barStyle="dark-content" />
       <HomeHeader />
-      <View style={{ height: '35%', backgroundColor: 'transparent' }} />
+      <Pressable
+        onPress={() => {
+          navigation.goBack();
+        }}>
+        <View style={{ height: '35%', backgroundColor: 'transparent' }} />
+      </Pressable>
       <View style={styles.container}>
         <View
           style={[
@@ -125,7 +130,7 @@ const CreateStart: React.FC<any> = ({ navigation, ...restProps }) => {
         buttonStyle={{ paddingHorizontal: 0 }}
         title="+ Create a New Share"
         onPress={() => {
-          navigation.goBack();
+          navigation.navigate('CreateActivity');
         }}
       />
     </View>

@@ -11,6 +11,7 @@ import {
   AddContact,
   HelloWorld,
   CreateStart,
+  CreateActivity,
 } from '@screens';
 const AuthStack = createStackNavigator();
 const AuthNavigator = () => {
@@ -31,6 +32,11 @@ const AuthNavigator = () => {
       <AuthStack.Screen
         name={t('CreateStart')}
         component={CreateStart}
+        options={{headerShown: false}}
+      />
+      <AuthStack.Screen
+        name={t('CreateActivity')}
+        component={CreateActivity}
         options={{headerShown: false}}
       />
       <AuthStack.Screen

@@ -11,3 +11,4 @@ export {default as Profile} from './profile';
 export {default as HomeHeader} from './home-header';
 export {default as CreateStart} from './create-start';
 export {default as HelloWorld} from './hello-world';
+export {default as CreateActivity} from './create-activity';

@@ -1,11 +1,12 @@
 import React from 'react';
-import {RNPickerSelect, Icon} from '@components';
-import {themes} from '@themes';
-import {useTheme} from '@hooks';
+import { RNPickerSelect, Icon } from '@components';
+import { themes } from '@themes';
+import { useTheme } from '@hooks';
 
 const Select: React.FC<any> = ({
   style,
   showIcon = true,
+  items,
   onValueChange = () => {},
   ...props
 }) => {
@@ -17,27 +18,21 @@ const Select: React.FC<any> = ({
       onValueChange={onValueChange}
       style={{
         ...theme,
-        iconContainer: {
-          top: 10,
-          right: 12,
-        },
         ...style,
       }}
-      items={[
-        {label: 'Football', value: 'football'},
-        {label: 'Baseball', value: 'baseball'},
-        {label: 'Hockey', value: 'hockey'},
-      ]}
+      items={items}
       Icon={() => {
-        if (showIcon)
+        if (showIcon) {
           return (
             <Icon
-              type="ionicon"
-              name="chevron-down"
-              containerStyle={{backgroundColor: '#0000000'}}
+              type="fontisto"
+              name="clock"
+              color={'#8492A5'}
+              containerStyle={{ paddingBottom: 5 }}
               size={24}
             />
           );
+        }
       }}
       {...props}
     />

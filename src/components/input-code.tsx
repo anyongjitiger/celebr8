@@ -27,7 +27,7 @@ const InputCode: React.FC<any> = ({
       style={{
         flexDirection: 'row',
         borderWidth: 1,
-        borderColor: 'gray',
+        borderColor: '#D3DCE6',
         height: 44,
         overflow: 'hidden',
         ...theme.borderRadius,

@@ -1,9 +1,8 @@
-
-import { registerThemes, useTheme } from "react-native-themed-styles"
-import { useColorScheme } from '../hooks'
-import { StyleSheet } from "react-native";
+import { registerThemes, useTheme } from 'react-native-themed-styles';
+import { useColorScheme } from '../hooks';
+import { StyleSheet } from 'react-native';
 // React Native Elements The Theme Object
-/* 
+/*
 interface theme {
   colors: {
     primary;
@@ -51,23 +50,23 @@ const test_shell = StyleSheet.create({
     marginHorizontal: 10,
     backgroundColor: 'gray',
     display: 'flex',
-    fontFamily: "",
-  }
-})
+    fontFamily: '',
+  },
+});
 
 const borderRadius = 4;
-const color_text1 = "#212934",
-  color_text2 = "#3B4857",
-  color_bg = "#FFFFFF",
-  color_caption = "#8492A5",
-  color_icons = "#D3DCE6";
+const color_text1 = '#212934',
+  color_text2 = '#3B4857',
+  color_bg = '#FFFFFF',
+  color_caption = '#D3DCE6',
+  color_icons = '#8492A5';
 
 const light = {
   backgroundColor: color_bg,
-  textColor: "gray",
+  textColor: 'gray',
   borderRadius,
   colors: {
-    primary: "#357f7e",
+    primary: '#357f7e',
     secondary: color_text2,
     white: '#ffffff',
     black: color_text1,
@@ -87,65 +86,73 @@ const light = {
   Avatar: {
     overlayContainerStyle: {
       // width: 78, height: 78, borderRadius: 39, backgroundColor: color_icons
-    }
+    },
   },
   Input: {
     fontSize: 14,
     containerStyle: { paddingHorizontal: 0, margin: 0 },
-    inputContainerStyle: { height: 44, lineHeight: 44, borderWidth: 1, borderRadius, paddingHorizontal: 10 },
+    inputContainerStyle: {
+      height: 44,
+      lineHeight: 44,
+      borderWidth: 1,
+      borderRadius,
+      paddingHorizontal: 10,
+    },
     labelStyle: {
       color: color_caption,
-      lineHeight: 16
+      lineHeight: 16,
     },
     errorStyle: {
-      fontWeight: "600",
-      fontSize:15,
-      color: color_caption
-    }
+      fontWeight: '600',
+      fontSize: 15,
+      color: color_caption,
+    },
   },
   Button: {
     raised: true,
     paddingVertical: 10,
-    buttonStyle: { height: 44, lineHeight: 44 }
+    buttonStyle: { height: 44, lineHeight: 44 },
   },
   SearchBar: {
-    containerStyle: { backgroundColor: "white", bordeWidth: 0 },
-    inputContainerStyle: { borderBottomWidth: 1, overflow: 'visible' }
+    containerStyle: { backgroundColor: 'white', bordeWidth: 0 },
+    inputContainerStyle: { borderBottomWidth: 1, overflow: 'visible' },
   },
   Text: {
     color: color_text2,
     h1Style: {
-      fontFamily: "Mulish",
+      fontFamily: 'Mulish',
       color: color_text1,
       fontSize: 22,
-      fontWeight: "700",
-      lineHeight: 28
+      fontWeight: '700',
+      lineHeight: 28,
     },
     h2Style: {
-      fontFamily: "Mulish",
+      fontFamily: 'Mulish',
       color: color_text1,
       fontSize: 16,
-      fontWeight: "400",
-      lineHeight: 24
+      fontWeight: '400',
+      lineHeight: 24,
     },
-    h3Style: { fontFamily: "Mulish", color: color_text1, },
-    h4Style: { fontFamily: "Mulish", color: color_text1, },
-    h5Style: { fontFamily: "Mulish", color: color_text1, }
+    h3Style: { fontFamily: 'Mulish', color: color_text1 },
+    h4Style: { fontFamily: 'Mulish', color: color_text1 },
+    h5Style: { fontFamily: 'Mulish', color: color_text1 },
   },
   Icon: {
     // containerStyle: { backgroundColor: color_icons }
-  }
-}
+  },
+};
 
 const dark = {
-  backgroundColor: "black",
-  textColor: "white"
-}
+  backgroundColor: 'black',
+  textColor: 'white',
+};
 
 const styleSheetFactory = registerThemes(
   { light, dark: { ...light, ...dark } }, // All themes you want to use.
-  () => { return useColorScheme() == 'dark' ? 'dark' : 'light' } // A function that returns the name of the default theme.
-)
+  () => {
+    return useColorScheme() == 'dark' ? 'dark' : 'light';
+  }, // A function that returns the name of the default theme.
+);
 
 const themes = styleSheetFactory(theme => ({
   container: {
@@ -155,27 +162,27 @@ const themes = styleSheetFactory(theme => ({
     height: '100%',
   },
   p1: {
-    padding: 16
+    padding: 16,
   },
   text: {
-    color: theme.textColor
+    color: theme.textColor,
   },
   view: {
-    backgroundColor: theme.backgroundColor
+    backgroundColor: theme.backgroundColor,
   },
   label: {
-    fontWeight: "700",
+    fontWeight: '700',
     fontSize: 16,
     color: color_caption,
   },
   center: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   borderRadius: { borderRadius },
   bg: {
-    backgroundColor: theme.backgroundColor
+    backgroundColor: theme.backgroundColor,
   },
   circle: {
     width: 64,
@@ -187,7 +194,7 @@ const themes = styleSheetFactory(theme => ({
   },
   border: {
     borderWidth: 1,
-    borderColor: ""
+    borderColor: '',
   },
   inputIOS: {
     fontSize: 16,
