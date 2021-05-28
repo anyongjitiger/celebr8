@@ -16,6 +16,7 @@ import {
   Divider,
   TextInput,
   Select,
+  DatePicker,
 } from '@components';
 import { themes } from '@themes';
 import { useTheme } from '@hooks';
@@ -27,7 +28,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
   const [images, setImages] = useState<ImageOrVideo[]>([]);
   const [text, onChangeText] = useState('');
   const [show, setShow] = useState(false);
-  const [arrow, setArrow] = useState('sort-down');
+  const [arrow, setArrow] = useState('caret-down');
   const deletePhoto = item => {
     const arr = images.filter(img => img.path !== item);
     setImages(arr);
@@ -81,7 +82,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               : 'data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==',
         }}
         style={styles.image}>
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <View style={[styles.rowContainer, { marginTop: 10 }]}>
             <View style={styles.fieldSet}>
               <Text style={styles.legend}>Title *</Text>
@@ -120,17 +121,18 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
           />
           <Icon
             name={arrow}
-            type="font-awesome-5"
-            size={20}
+            type="fontisto"
+            size={15}
             color={'#357F7E'}
+            containerStyle={{ width: 20, alignSelf: 'center' }}
             onPress={() => {
               setShow(s => !s);
-              setArrow(a => (a === 'sort-down' ? 'sort-up' : 'sort-down'));
+              setArrow(a => (a === 'caret-down' ? 'caret-up' : 'caret-down'));
             }}
           />
           {show && (
             <View>
-              <View style={[styles.rowContainer, { marginTop: 10 }]}>
+              <View style={[styles.rowContainer]}>
                 <View style={styles.fieldSet}>
                   <Text style={styles.legend}>Location name</Text>
                   <TextInput
@@ -140,7 +142,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                   />
                 </View>
               </View>
-              <View style={[styles.rowContainer, { marginTop: 15 }]}>
+              <View style={[styles.rowContainer]}>
                 <View style={{ width: '48%' }}>
                   <Select
                     showIcon
@@ -150,7 +152,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                     ]}
                     style={{
                       iconContainer: {
-                        top: 8,
+                        top: 10,
                         right: '80%',
                       },
                       inputIOS: [theme.inputIOS, { paddingLeft: 45 }],
@@ -158,37 +160,37 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                     }}
                   />
                 </View>
-                <View style={{ width: '48%', marginLeft: '4%' }}>
-                  <Select
-                    showIcon
-                    items={[
-                      { label: 'tomato', value: 1 },
-                      { label: 'potato', value: 2 },
-                    ]}
-                    style={{
-                      iconContainer: {
-                        top: 8,
-                        right: '80%',
-                      },
-                      inputIOS: [theme.inputIOS, { paddingLeft: 45 }],
-                      inputAndroid: [theme.inputAndroid, { paddingLeft: 45 }],
-                    }}
+                <View
+                  style={{
+                    width: '48%',
+                    marginLeft: '4%',
+                    justifyContent: 'center',
+                    marginTop: 30,
+                  }}>
+                  <DatePicker
+                    dateConfig={{}}
+                    onChangeText={t => console.log(t)}
+                    date={new Date()}
                   />
                 </View>
               </View>
             </View>
           )}
-          <Divider
-            style={{ backgroundColor: '#EEEEEE', marginTop: 10, height: 2 }}
-          />
+          <Divider style={{ backgroundColor: '#EEEEEE', height: 2 }} />
           <Text style={{ color: '#8492A5', marginTop: 10, fontWeight: '400' }}>
             Upload *
           </Text>
-          <ScrollView
-            style={{ marginTop: 10, marginHorizontal: 10, maxHeight: 160 }}
-            contentContainerStyle={[
+          <View
+            // style={{ marginTop: 10, marginHorizontal: 10, width: '100%' }}
+            style={[
               styles.rowContainer,
-              { flexWrap: 'wrap', justifyContent: 'flex-start' },
+              {
+                flexWrap: 'wrap',
+                justifyContent: 'flex-start',
+                marginTop: 10,
+                marginHorizontal: 10,
+                width: '100%',
+              },
             ]}>
             {listItems}
             <View
@@ -225,8 +227,10 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                 }}
               />
             </View>
-          </ScrollView>
-          <Divider style={{ backgroundColor: '#EEEEEE', height: 2 }} />
+          </View>
+          <Divider
+            style={{ backgroundColor: '#EEEEEE', height: 2, marginTop: 5 }}
+          />
           <View style={[styles.rowContainer, { marginTop: 5 }]}>
             <Text
               style={{ color: '#8492A5', marginTop: 10, fontWeight: '400' }}>
@@ -238,6 +242,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               flexDirection: 'row',
               justifyContent: 'flex-start',
               marginTop: 10,
+              marginBottom: 80,
             }}>
             <View
               style={{
@@ -276,7 +281,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               ),
             )}
           </View>
-        </View>
+        </ScrollView>
       </ImageBackground>
 
       <View
@@ -286,6 +291,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
             width: '90%',
             position: 'absolute',
             bottom: 15,
+            backgroundColor: 'transparent',
             justifyContent: 'space-between',
           },
         ]}>

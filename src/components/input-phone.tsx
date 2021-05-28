@@ -1,16 +1,16 @@
 import React from 'react';
-import {useTranslation, useState} from '@hooks';
-import {themes, useTheme} from '../themes';
-import {Input} from '@components';
+import { useTranslation, useState } from '@hooks';
+import { themes, useTheme } from '../themes';
+import { Input } from '@components';
 import parsePhoneNumber from 'libphonenumber-js/mobile';
-import {Keyboard} from '@helpers';
-const PhoneInput: React.FC<any> = ({onChangeText = () => {}, ...props}) => {
+import { Keyboard } from '@helpers';
+const PhoneInput: React.FC<any> = ({ onChangeText = () => {}, ...props }) => {
   const [phone, setPhone] = useState('');
 
   const onChangePhone = (txt = '') => {
     const phoneNumber = parsePhoneNumber(txt);
 
-    console.log('isValid', phoneNumber?.isValid());
+    // console.log('isValid', phoneNumber?.isValid());
 
     if (phoneNumber?.isValid()) {
       Keyboard.dismiss();

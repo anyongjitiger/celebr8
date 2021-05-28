@@ -16,7 +16,7 @@ const client = axios.create(<AxiosRequestConfig>requestConfig);
 export const apiRequest = client.request;
 
 client.interceptors.request.use((preRequestConfig: AxiosRequestConfig) => {
-  console.log('request', preRequestConfig);
+  console.warn(preRequestConfig);
 
   const { token } = getGlobal();
   preRequestConfig.headers['Token'] = token;

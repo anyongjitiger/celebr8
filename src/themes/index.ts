@@ -45,6 +45,7 @@ interface theme {
 const test_shell = StyleSheet.create({
   border: {
     borderRadius: 2,
+    // borderColor: "#F9FAFC",
     paddingHorizontal: 1,
     paddingVertical: 19,
     marginHorizontal: 10,
@@ -91,6 +92,7 @@ const light = {
   Input: {
     fontSize: 14,
     containerStyle: { paddingHorizontal: 0, margin: 0 },
+    inputStyle: { borderColor: '#D3DCE6' },
     inputContainerStyle: {
       height: 44,
       lineHeight: 44,
@@ -150,7 +152,7 @@ const dark = {
 const styleSheetFactory = registerThemes(
   { light, dark: { ...light, ...dark } }, // All themes you want to use.
   () => {
-    return useColorScheme() == 'dark' ? 'dark' : 'light';
+    return useColorScheme() === 'dark' ? 'dark' : 'light';
   }, // A function that returns the name of the default theme.
 );
 
@@ -163,6 +165,9 @@ const themes = styleSheetFactory(theme => ({
   },
   p1: {
     padding: 16,
+  },
+  p0: {
+    padding: 0,
   },
   text: {
     color: theme.textColor,
@@ -194,7 +199,12 @@ const themes = styleSheetFactory(theme => ({
   },
   border: {
     borderWidth: 1,
-    borderColor: '',
+    borderColor: color_caption,
+  },
+  textarea: {
+    textAlignVertical: 'top',
+    paddingHorizontal: 10,
+    height: 100,
   },
   inputIOS: {
     fontSize: 16,

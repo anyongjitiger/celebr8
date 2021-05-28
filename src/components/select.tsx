@@ -15,6 +15,7 @@ const Select: React.FC<any> = ({
   return (
     <RNPickerSelect
       useNativeAndroidPickerStyle={false}
+      placeholder={{}}
       onValueChange={onValueChange}
       style={{
         ...theme,

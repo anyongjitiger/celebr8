@@ -6,7 +6,7 @@ export {
   SectionList,
   ImageBackground,
   RefreshControl,
-  ScrollView,
+  // ScrollView,
   StatusBar,
   TextInput,
   TouchableWithoutFeedback,
@@ -20,6 +20,8 @@ export {
   Pressable,
   I18nManager,
   KeyboardAvoidingView,
+  Touchable,
+  TouchableHighlight
 } from 'react-native';
 
 export {
@@ -55,6 +57,7 @@ export { default as Lable } from './label';
 // export { default as Input } from "./input";
 export { ThemeConsumer } from 'react-native-elements';
 export { default as View } from './view';
+export { default as ScrollView } from './scroll-view';
 export { Form, Field } from 'react-final-form';
 export { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 export { default as InputCode } from './input-code';
@@ -69,3 +72,5 @@ export { default as Video } from 'react-native-video';
 export { default as Svg } from './svg';
 export { default as AppleStyleSwipeableRow } from './AppleStyleSwipeableRow';
 export { default as FastImage } from 'react-native-fast-image';
+export { default as DatePicker } from './date-time-picker';
+export { default as TextArea } from './text-area';

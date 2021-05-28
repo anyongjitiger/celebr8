@@ -9,6 +9,14 @@ import { RNFetchBlobConfig } from 'rn-fetch-blob';
 const url_upload = `${config.API_URL}${API.FILE_UPLOAD}`;
 const url_download = `${config.API_URL}${API.FILE_DOWNLOAD}`;
 
+type TFile = {
+  id?: number;
+  user_id: number;
+  expe_id: number;
+  file_name: string;
+  uploda_date: number;
+}
+
 function upload(
   files: ImageOrVideo | ImageOrVideo[] | any,
   option?: UploadOption,

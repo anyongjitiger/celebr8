@@ -98,7 +98,6 @@ const LoginScreen: React.FC<any> = ({navigation}) => {
     setCodeDisable(!phone);
   }, [phone]);
 
-  const debug = __DEV__ ? <Text>{temp_code}</Text> : null;
   return (
     <KeyboardAwareScrollView style={[theme.container]}>
       <View style={[theme.center]}>

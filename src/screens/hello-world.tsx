@@ -8,15 +8,23 @@ import {
   Header,
   TouchableOpacity,
   Divider,
+  ScrollView,
+  Input,
+  Lable,
+  ListItem,
+  DatePicker,
+  TextArea,
 } from '@components';
-import {useTranslation, useGlobal, useState} from '@hooks';
-import {useTheme, themes} from '@themes';
-import {UnderlayParams} from 'react-native-swipeable-item';
+import { Platform } from 'react-native';
+import { useTranslation, useGlobal, useState } from '@hooks';
+import { useTheme, themes } from '@themes';
+import { UnderlayParams } from 'react-native-swipeable-item';
 import ImagePicker from 'react-native-image-crop-picker';
-import {ImageOrVideo} from '@types';
-import {Table} from '@constants';
+import { ImageOrVideo } from '@types';
+import { Table } from '@constants';
 import Video from 'react-native-video';
-import {API} from '@constants';
+import { API } from '@constants';
+
 import {
   fileFetch,
   dbFetch,
@@ -24,9 +32,10 @@ import {
   getUTCTime,
   getAllContacts,
 } from '@services';
+
 import config from '@config';
-import {useNavigation} from '@react-navigation/core';
-import {RNFetchBlob} from '@helpers';
+import { useNavigation } from '@react-navigation/core';
+import { RNFetchBlob } from '@helpers';
 
 const dirs = RNFetchBlob.fs.dirs;
 const styles = StyleSheet.create({
@@ -72,7 +81,7 @@ type Item = {
   height: number;
 };
 
-const renderUnderlayLeft = ({item, percentOpen}: UnderlayParams<Item>) => (
+const renderUnderlayLeft = ({ item, percentOpen }: UnderlayParams<Item>) => (
   <>
     <TouchableOpacity>
       <Text style={styles.red}>{`[x]`}</Text>
@@ -100,7 +109,8 @@ const renderUnderlayLeft = ({item, percentOpen}: UnderlayParams<Item>) => (
 // };
 
 const HelloWorld: React.FC<any> = () => {
-  const {token} = getGlobal();
+  const { token } = getGlobal();
+  const [, setToken] = useGlobal('token');
   const [theme] = useTheme(themes);
   // Later on in your styles..
   const styles = StyleSheet.create({
@@ -112,16 +122,20 @@ const HelloWorld: React.FC<any> = () => {
       right: 0,
       width: '100%',
     },
+    divider: {
+      backgroundColor: 'blue',
+      marginVertical: 5,
+    },
   });
 
   const [images, setImages] = useState<ImageOrVideo[]>([]);
   const nav = useNavigation();
 
-  const {user} = getGlobal();
+  const { user } = getGlobal();
   console.log(' current user', user);
 
   function onGetAllContacts() {
-    nav.navigate('AddContact', {screen: 'Hello'});
+    nav.navigate('AddContact', { screen: 'Hello' });
   }
 
   const onPick = () => {
@@ -182,23 +196,32 @@ const HelloWorld: React.FC<any> = () => {
     // fileFetch.remove('aaa');
   };
 
+  async function testGetUTCTime() {
+    const [err, time] = await getUTCTime();
+    if (!err) console.log('get utc time=>>', time, new Date(time).toString());
+  }
+
   function testDbFetchQuery() {
     /* get all */
     dbFetch.query(Table.Experience).then((res: any) => {
       const [error, data] = res;
-      console.log(error, data);
+      console.log('query all :', error, data);
     });
 
     /* get one */
-    dbFetch.query(Table.Experience, {vals: 4}).then((res: any) => {
-      const [error, data] = res;
-      console.log(error, data);
-    });
+    dbFetch
+      .query(Table.Experience, { columns: 'id,owner,title' })
+      .then((res: any) => {
+        const [error, data] = res;
+        console.log(error, data);
+      });
+
     /* specified  fileds */
     dbFetch
       .query(Table.Experience, {
-        names: ['owner', 'title', 'descr'],
-        types: ['int', 'string', 'string'],
+        page: 1,
+        length: 2,
+        columns: 'owner,title,descr',
       })
       .then((res: any) => {
         const [error, data] = res;
@@ -208,19 +231,12 @@ const HelloWorld: React.FC<any> = () => {
     /* where query */
     dbFetch
       .query(Table.Experience, {
-        vals: [4, 'xsh.lee'],
-        names: ['id', 'location'],
-        types: ['int', 'string'],
+        id: 4,
       })
       .then((res: any) => {
         const [error, data] = res;
         console.log(error, data);
       });
-  }
-
-  async function testGetUTCTime() {
-    const [err, time] = await getUTCTime();
-    if (!err) console.log('get utc time=>>', time, new Date(time).toString());
   }
 
   async function testDbFetchInsert() {
@@ -244,63 +260,76 @@ const HelloWorld: React.FC<any> = () => {
   async function testDbFetchUpdate() {
     const [err, time] = await getUTCTime();
     dbFetch
-      .update(Table.Experience, 1, {
-        edit_date: time,
-      })
+      .update(
+        Table.Experience,
+        { id: 1 },
+        {
+          edit_date: time,
+        },
+      )
       .then((res: any) => {
         const [er, d] = res;
         console.log(' insert experience error :', er, 'res:', d);
       });
   }
 
-  async function testDbFetchDelete() {}
+  async function testDbFetchDelete() {
+    dbFetch.remove(Table.Experience, { id: 4 }).then((res: any) => {
+      const [er, d] = res;
+      console.log(' testDbFetchDelete error:', er, 'res:', d);
+    });
+  }
+  const [date, setDate] = useState(new Date(1598051730000));
 
   return (
-    <View style={theme.container}>
-      <Video
-        source={{
-          uri: url_download + '/1.mp4',
-          headers: {
-            Token: token + '',
-          },
-        }} // Can be a URL or a local file.
-        repeat={true}
-        ref={ref => {
-          // this.player = ref;
-        }} // Store reference
-        // onBuffer={this.onBuffer} // Callback when remote video is buffering
-        onError={err => {
-          console.error(' Video err', err);
-        }} // Callback when video cannot be loaded
-        style={styles.backgroundVideo}
-      />
-      {/* <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+    <ScrollView style={theme.container}>
+      <TextArea></TextArea>
+      <Divider style={styles.divider} />
+      <DatePicker onChangeText={() => {}} value={new Date()}></DatePicker>
+      <Divider style={styles.divider} />
+      <Input
+        editable
+        multiline
+        numberOfLines={4}
+        label={<Lable label="hello *" />}></Input>
+      <Divider style={styles.divider} />
+      <Input label={<Lable label="hello" />}></Input>
       <Button title="Get All Contacts" onPress={onGetAllContacts}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button title="Select image" onPress={onPick}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button title="upload" onPress={onUpload}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button title="download" onPress={onDownload}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button title="getFileList" onPress={getFileList}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button title="Delete File" onPress={onUpload}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button
         title="Test dbFetch API Query"
         onPress={testDbFetchQuery}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button
         title="Test dbFetch API insert"
         onPress={testDbFetchInsert}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
+      <Divider style={styles.divider} />
       <Button
         title="Test dbFetch API Update"
         onPress={testDbFetchUpdate}></Button>
-      <Divider style={{backgroundColor: 'blue', marginVertical: 5}} />
-      <Button title="Get UTC Time" onPress={testGetUTCTime}></Button> */}
-    </View>
+      <Divider style={styles.divider} />
+      <Button
+        title="Test dbFetch API Delete"
+        onPress={testDbFetchDelete}></Button>
+      <Divider style={styles.divider} />
+      <Button title="Get UTC Time" onPress={testGetUTCTime}></Button>
+      <Divider style={styles.divider} />
+      <Button
+        title="Logout"
+        onPress={() => {
+          setToken('');
+        }}></Button>
+    </ScrollView>
   );
 };
 export default HelloWorld;

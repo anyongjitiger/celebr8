@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {getAllContacts} from '@services';
-import {TContact} from '@types';
+import { getAllContacts } from '@services';
+import { TContact } from '@types';
 
-import {useTranslation, useTheme, useState, useEffect} from '@hooks';
+import { useTranslation, useTheme, useState, useEffect } from '@hooks';
 
 import {
   View,
@@ -11,12 +11,15 @@ import {
   CheckBox,
   Header,
   SearchBar,
-  Button,
   NameAvatar,
   Icon,
+  FlatList,
+  StatusBar,
+  ScrollView,
 } from '@components';
 
-import {themes} from '@themes';
+import { themes } from '@themes';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const filterUsersBySearch = (searchValue: string) => (
   user: TContact,
@@ -27,14 +30,15 @@ const filterUsersBySearch = (searchValue: string) => (
     : true;
 };
 
-const AddContact: React.FC<any> = ({route, navigation}) => {
+const AddContact: React.FC<any> = ({ route, navigation }) => {
   const [theme] = useTheme(themes);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [allContacts, setContacts] = useState<TContact[]>([]);
   const [selectList, setSelect] = useState<TContact[]>([]);
   const [searchValue, setSearch] = useState('');
 
   const onSelected = (item: TContact) => {
+    console.log(' onSelected...');
     const i = selectList.findIndex((c: TContact) => {
       return c.id === item.id;
     });
@@ -44,18 +48,19 @@ const AddContact: React.FC<any> = ({route, navigation}) => {
       selectList.push(item);
     }
     setSelect([...selectList]);
-    // console.log('onSelected selectList', selectList);
   };
+
   function done() {
-    const {screen} = route.params;
+    const { screen } = route.params;
     navigation.navigate({
       name: screen,
-      params: {contacts: selectList},
+      params: { contacts: selectList },
       merge: true,
     });
   }
 
   const onChecked = (item: TContact) => {
+    console.log('on checked...');
     const checked = selectList.findIndex(c => c.id === item.id) > -1;
     return checked;
   };
@@ -78,16 +83,63 @@ const AddContact: React.FC<any> = ({route, navigation}) => {
     });
   }, []);
 
+  useEffect(() => {}, [selectList]);
+
+  const randerItem = ({ item, index }) => {
+    return (
+      <ListItem
+        key={index}
+        containerStyle={{
+          paddingHorizontal: 0,
+          paddingVertical: 8,
+          marginVertical: 0,
+        }}>
+        <ListItem.CheckBox
+          checked={onChecked(item)}
+          onPress={() => {
+            onSelected(item);
+          }}
+          containerStyle={{
+            borderWidth: 0,
+            marginHorizontal: 0,
+            marginVertical: 0,
+            paddingHorizontal: 0,
+          }}
+        />
+        {item.picture ? (
+          <Avatar
+            source={{ uri: item.picture }}
+            size="medium"
+            containerStyle={{ width: 40, height: 40 }}
+            rounded
+          />
+        ) : (
+          <NameAvatar
+            name={item.name}
+            style={{ paddingLeft: 0 }}
+            color={'#D3DCE6'}
+          />
+        )}
+        <ListItem.Content
+          style={{ paddingHorizontal: 0, marginHorizontal: 0 }}
+          onPress={() => {
+            onSelected(item);
+          }}>
+          <ListItem.Title>{item.name}</ListItem.Title>
+        </ListItem.Content>
+      </ListItem>
+    );
+  };
+
   return (
-    <View style={theme.container}>
+    <SafeAreaView style={[theme.container, theme.p0]}>
+      <StatusBar barStyle="dark-content" />
       <Header
         backgroundColor="white"
         leftComponent={
           <Icon
-            // size={25}
             name="arrowleft"
             type="antdesign"
-            color="#D3DCE6"
             onPress={() => {
               navigation.goBack();
             }}
@@ -98,16 +150,16 @@ const AddContact: React.FC<any> = ({route, navigation}) => {
           style: {
             color: '#212934',
             fontWeight: '700',
-            // fontSize: 16,
-            // lineHeight: 24,
+            fontSize: 16,
+            lineHeight: 24,
           },
         }}
         rightComponent={{
           style: {
             color: '#212934',
-            fontWeight: '600',
-            // fontSize: 16,
-            // lineHeight: 24,
+            fontWeight: '700',
+            fontSize: 16,
+            lineHeight: 24,
           },
           onPress: done,
           text: 'Add',
@@ -116,45 +168,59 @@ const AddContact: React.FC<any> = ({route, navigation}) => {
       <SearchBar
         placeholder="Type Here..."
         lightTheme={true}
-        inputContainerStyle={{backgroundColor: 'white'}}
+        inputContainerStyle={{ backgroundColor: 'white' }}
         onChangeText={onChangeSearchTxt}
         value={searchValue}
       />
-      <>
-        {filteredUsers.map((item, i) => (
-          <ListItem key={i}>
-            <CheckBox
-              checked={onChecked(item)}
-              onPress={() => {
-                onSelected(item);
-              }}
+
+      <ScrollView style={theme.container}>
+        <>
+          {filteredUsers.map((item, index) => (
+            <ListItem
+              key={index}
               containerStyle={{
-                margin: 0,
-                padding: 0,
-                borderWidth: 0,
-                marginHorizontal: 0,
-              }}
-            />
-            {item.picture ? (
-              <Avatar
-                source={{uri: item.picture}}
-                avatarStyle={{margin: 0, padding: 0, borderWidth: 0}}
-                rounded
-              />
-            ) : (
-              <NameAvatar name={item.name} color={'#D3DCE6'} />
-            )}
-            <ListItem.Content
-              style={{margin: 0, padding: 0, borderWidth: 0}}
-              onPress={() => {
-                onSelected(item);
+                paddingHorizontal: 0,
+                paddingVertical: 8,
+                marginVertical: 0,
               }}>
-              <ListItem.Title>{item.name}</ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        ))}
-      </>
-    </View>
+              <ListItem.CheckBox
+                checked={onChecked(item)}
+                onPress={() => {
+                  onSelected(item);
+                }}
+                containerStyle={{
+                  borderWidth: 0,
+                  marginHorizontal: 0,
+                  marginVertical: 0,
+                  paddingHorizontal: 0,
+                }}
+              />
+              {item.picture ? (
+                <Avatar
+                  source={{ uri: item.picture }}
+                  size="medium"
+                  containerStyle={{ width: 40, height: 40 }}
+                  rounded
+                />
+              ) : (
+                <NameAvatar
+                  name={item.name}
+                  style={{ paddingLeft: 0 }}
+                  color={'#D3DCE6'}
+                />
+              )}
+              <ListItem.Content
+                style={{ paddingHorizontal: 0, marginHorizontal: 0 }}
+                onPress={() => {
+                  onSelected(item);
+                }}>
+                <ListItem.Title>{item.name}</ListItem.Title>
+              </ListItem.Content>
+            </ListItem>
+          ))}
+        </>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

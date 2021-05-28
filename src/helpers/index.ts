@@ -9,5 +9,5 @@ export { Keyboard, PermissionsAndroid } from 'react-native';
 export { getFileName };
 export { default as validator } from 'validator';
 export { default as SvgUri } from './svgUri';
-export { default as AsyncStorage } from '@react-native-community/async-storage'
+export { default as AsyncStorage } from '@react-native-async-storage/async-storage';
 export { default as RNFetchBlob } from 'rn-fetch-blob';
