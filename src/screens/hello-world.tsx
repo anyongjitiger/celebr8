@@ -279,13 +279,12 @@ const HelloWorld: React.FC<any> = () => {
       console.log(' testDbFetchDelete error:', er, 'res:', d);
     });
   }
-  const [date, setDate] = useState(new Date(1598051730000));
 
   return (
     <ScrollView style={theme.container}>
       <TextArea></TextArea>
       <Divider style={styles.divider} />
-      <DatePicker onChangeText={() => {}} value={new Date()}></DatePicker>
+      <DatePicker onChangeText={date => {}} date={new Date()}></DatePicker>
       <Divider style={styles.divider} />
       <Input
         editable

@@ -1,6 +1,6 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import {useTranslation} from '@hooks';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useTranslation } from '@hooks';
 import {
   HomeScreen,
   Homepage,
@@ -15,24 +15,24 @@ import {
 } from '@screens';
 const AuthStack = createStackNavigator();
 const AuthNavigator = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <AuthStack.Navigator headerMode="none" mode="modal">
       {/* <AuthStack.Screen
         name={t('Hello')}
         component={HelloWorld}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       /> */}
       <AuthStack.Screen
         name={t('Homepage')}
         component={Homepage}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <AuthStack.Screen
         name={t('CreateStart')}
         component={CreateStart}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <AuthStack.Screen
         name={t('CreateActivity')}
@@ -42,32 +42,32 @@ const AuthNavigator = () => {
       <AuthStack.Screen
         name={t('Activity')}
         component={Activity}
-        options={{headerShown: true}}
+        options={{ headerShown: true }}
       />
       <AuthStack.Screen
         name={t('ViewImage')}
         component={ViewImage}
-        options={{headerShown: true}}
+        options={{ headerShown: true }}
       />
       <AuthStack.Screen
         name={t('Notifications')}
         component={Notifications}
-        options={{headerShown: true}}
+        options={{ headerShown: true }}
       />
       <AuthStack.Screen
         name={t('Home')}
         component={HomeScreen}
-        options={{headerShown: false}}
+        options={{ headerShown: false }}
       />
       <AuthStack.Screen
         name={t('Profile')}
         component={Profile}
-        options={{headerShown: true}}
+        options={{ headerShown: true }}
       />
       <AuthStack.Screen
         name={t('AddContact')}
         component={AddContact}
-        options={{headerShown: true}}
+        options={{ headerShown: true }}
       />
     </AuthStack.Navigator>
   );

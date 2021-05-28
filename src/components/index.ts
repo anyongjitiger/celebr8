@@ -21,7 +21,8 @@ export {
   I18nManager,
   KeyboardAvoidingView,
   Touchable,
-  TouchableHighlight
+  TouchableHighlight,
+  Linking
 } from 'react-native';
 
 export {
