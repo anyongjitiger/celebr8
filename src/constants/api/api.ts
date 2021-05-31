@@ -32,6 +32,16 @@ const api = Object.freeze({
    */
   FILE_LIST: "/file/filenames",
   /**
+   * set experience master image
+   * method:post,
+   * params:{expe_id, user_id, file:[],del_files:""}
+   */
+  SET_BG_IMAGE: "/file/set/bgi",
+  /**
+   * 
+   */
+  DELETE_IMAGE: "/file/remove",
+  /**
    * method:post
    * data:{phone}
    */

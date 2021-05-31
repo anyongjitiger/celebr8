@@ -7316,6 +7316,11 @@ react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+react-native-branch@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.npmjs.org/react-native-branch/-/react-native-branch-5.0.3.tgz#6215b1fee769a1710c6e137d05af65ea0c2ab705"
+  integrity sha512-nF9WmyI2hV9NenTqzBj0L5wK6g26MJDLoZULOVsd/eVhdAt4S/1yikkunrMy4XmbhWEFqSFG96yWfM7hZA9bvw==
+
 react-native-codegen@^0.0.6:
   version "0.0.6"
   resolved "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.0.6.tgz#b3173faa879cf71bfade8d030f9c4698388f6909"
@@ -7437,6 +7442,11 @@ react-native-ratings@^7.3.0:
   dependencies:
     lodash "^4.17.15"
     prop-types "^15.7.2"
+
+react-native-raw-bottom-sheet@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.nlark.com/react-native-raw-bottom-sheet/download/react-native-raw-bottom-sheet-2.2.0.tgz#d11dabb86aadb014273767ef7b554924b13633c5"
+  integrity sha1-0R2ruGqtsBQnN2fve1VJJLE2M8U=
 
 react-native-reanimated@^2.1.0:
   version "2.1.0"
@@ -7683,6 +7693,11 @@ readable-stream@~2.3.6:
     safe-buffer "~5.1.1"
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
+
+reanimated-bottom-sheet@^1.0.0-alpha.22:
+  version "1.0.0-alpha.22"
+  resolved "https://registry.nlark.com/reanimated-bottom-sheet/download/reanimated-bottom-sheet-1.0.0-alpha.22.tgz#01a200946f1a461f01f1e773e5b4961c2df2e53b"
+  integrity sha1-AaIAlG8aRh8B8edz5bSWHC3y5Ts=
 
 recast@^0.20.3:
   version "0.20.4"

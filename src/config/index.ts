@@ -4,7 +4,7 @@ import prod_config from './prod';
 
 const default_config = Object.freeze({
   // FORM_ERROR,
-  APP_NAME: 'celebr8life',
+  APP_NAME: 'celebr8',
   API_URL: 'https://vshrmu5xxg.execute-api.us-east-1.amazonaws.com/prod',
   // API_URL_PROD: 'https://_',
   API_REQUEST_TIMEOUT: 25e3,

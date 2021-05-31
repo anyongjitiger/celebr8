@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker';
 import {
   Text,
@@ -17,18 +17,68 @@ import {
   TextInput,
   Select,
   DatePicker,
+  Svg,
 } from '@components';
 import { themes } from '@themes';
 import { useTheme } from '@hooks';
+import { ActivityType } from '@constants';
 
 const CreateActivity: React.FC<any> = ({ route, navigation }) => {
   const contacts = route?.params?.contacts;
   const activity = route?.params?.activity;
+  const activityType = route?.params?.activityType;
   const [theme] = useTheme(themes);
   const [images, setImages] = useState<ImageOrVideo[]>([]);
-  const [text, onChangeText] = useState('');
+  const [title, onChangeTitle] = useState('');
+  const [description, onChangeDescription] = useState('');
+  const [location, onChangeLocation] = useState('');
   const [show, setShow] = useState(false);
   const [arrow, setArrow] = useState('caret-down');
+
+  const icon = type => {
+    switch (type) {
+      case ActivityType.Birthday:
+        return (
+          <Icon
+            name="birthday-cake"
+            type="font-awesome"
+            color="#F1C40F"
+            size={20}
+          />
+        );
+      case ActivityType.Wedding:
+        return <Svg icon="wedding-rings" size="20" color="#E84C3D" />;
+      case ActivityType.Party:
+        return (
+          <Icon
+            name="glass-cheers"
+            type="font-awesome-5"
+            color="#E77E23"
+            size={20}
+          />
+        );
+      case ActivityType.Trip:
+        return <Icon name="island" type="fontisto" color="#2CCB6F" size={20} />;
+      case ActivityType.Meeting:
+        return (
+          <Icon name="users" type="font-awesome" color="#E84C3D" size={20} />
+        );
+      case ActivityType.Others:
+        return (
+          <Icon
+            name="border-all"
+            type="font-awesome-5"
+            color="#9955B3"
+            size={20}
+          />
+        );
+      default:
+        return (
+          <Icon name="beer" type="font-awesome" color="#9955B3" size={20} />
+        );
+    }
+  };
+
   const deletePhoto = item => {
     const arr = images.filter(img => img.path !== item);
     setImages(arr);
@@ -88,16 +138,10 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               <Text style={styles.legend}>Title *</Text>
               <TextInput
                 style={styles.input}
-                onChangeText={onChangeText}
-                value={text}
+                onChangeText={onChangeTitle}
+                value={title}
               />
-              <Icon
-                name="island"
-                type="fontisto"
-                color="#FF5959"
-                size={20}
-                style={{ position: 'relative', right: 0, top: 0 }}
-              />
+              {icon(activityType)}
             </View>
           </View>
           <View
@@ -109,10 +153,10 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               <Text style={styles.legend}>Description *</Text>
               <TextInput
                 style={[styles.input, { height: 100 }]}
-                onChangeText={onChangeText}
+                onChangeText={onChangeDescription}
                 multiline
                 numberOfLines={4}
-                value={text}
+                value={description}
               />
             </View>
           </View>
@@ -137,13 +181,29 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                   <Text style={styles.legend}>Location name</Text>
                   <TextInput
                     style={styles.input}
-                    onChangeText={onChangeText}
-                    value={text}
+                    onChangeText={onChangeLocation}
+                    value={location}
                   />
                 </View>
               </View>
-              <View style={[styles.rowContainer]}>
+              <View
+                style={[
+                  styles.rowContainer,
+                  { marginTop: 10, marginBottom: 5 },
+                ]}>
                 <View style={{ width: '48%' }}>
+                  <DatePicker
+                    dateConfig={{}}
+                    onChangeText={t => console.log(t)}
+                    date={new Date()}
+                  />
+                </View>
+                <View
+                  style={{
+                    width: '48%',
+                    alignSelf: 'flex-start',
+                    marginLeft: '4%',
+                  }}>
                   <Select
                     showIcon
                     items={[
@@ -152,25 +212,18 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                     ]}
                     style={{
                       iconContainer: {
-                        top: 10,
+                        top: 8,
                         right: '80%',
                       },
-                      inputIOS: [theme.inputIOS, { paddingLeft: 45 }],
-                      inputAndroid: [theme.inputAndroid, { paddingLeft: 45 }],
+                      inputIOS: [
+                        theme.inputIOS,
+                        { paddingLeft: 45, height: 40 },
+                      ],
+                      inputAndroid: [
+                        theme.inputAndroid,
+                        { paddingLeft: 45, height: 40 },
+                      ],
                     }}
-                  />
-                </View>
-                <View
-                  style={{
-                    width: '48%',
-                    marginLeft: '4%',
-                    justifyContent: 'center',
-                    marginTop: 30,
-                  }}>
-                  <DatePicker
-                    dateConfig={{}}
-                    onChangeText={t => console.log(t)}
-                    date={new Date()}
                   />
                 </View>
               </View>
@@ -307,7 +360,8 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
             backgroundColor: '#39817E',
           }}
           titleStyle={{ color: '#F3F8F7' }}
-          title="Share"
+          title="Save as draft"
+          onPress={() => navigation.goBack()}
         />
         <Button
           containerStyle={{
@@ -320,7 +374,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
             backgroundColor: '#39817E',
           }}
           titleStyle={{ color: '#F3F8F7' }}
-          title="Not this time"
+          title="Share"
           onPress={() => navigation.goBack()}
         />
       </View>

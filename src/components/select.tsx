@@ -25,13 +25,7 @@ const Select: React.FC<any> = ({
       Icon={() => {
         if (showIcon) {
           return (
-            <Icon
-              type="fontisto"
-              name="clock"
-              color={'#8492A5'}
-              containerStyle={{ paddingBottom: 5 }}
-              size={24}
-            />
+            <Icon type="fontisto" name="clock" color={'#8492A5'} size={22} />
           );
         }
       }}

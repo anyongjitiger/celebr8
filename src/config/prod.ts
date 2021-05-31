@@ -1,7 +1,7 @@
 export default Object.freeze({
   // FORM_ERROR,
   APP_NAME: 'celebr8life',
-  API_URL: 'https://vshrmu5xxg.execute-api.us-east-1.amazonaws.com/prod',
+  API_URL: "http://celweb-env.eba-fnm8pdtf.us-east-2.elasticbeanstalk.com",
   // API_URL_PROD: 'https://_',
   SENTRY_DSN: 'https://364d916c2a82497ea4278ea5758f90d5@o486434.ingest.sentry.io/5543663',
   PUBNUB_SUBSCRIBE_KEY: 'sub-c-7192d740-1465-11eb-9b79-2636081330fc',

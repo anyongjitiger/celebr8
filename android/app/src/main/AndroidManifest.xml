@@ -33,8 +33,12 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="https" android:host="celber8" />
+            <data android:scheme="https" android:host="xshlee.app.link" />
         </intent-filter>
       </activity>
+      <!-- Branch keys -->
+        <!-- (Omit if setting keys in branch.json) -->
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_md5h4UnneoCeqDJkIHxiUdiaqEbkc8ax"/>
+        <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_na6c8LdchlvjuDHeSQtfXdanvDjlo0nN"/>
     </application>
 </manifest>

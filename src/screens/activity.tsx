@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
+import React, { useState, useEffect } from 'react';
+import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker';
 import {
   Text,
   View,
@@ -17,31 +17,28 @@ import {
   Divider,
 } from '@components';
 
-const Activity: React.FC<any> = ({route, navigation}) => {
+const Activity: React.FC<any> = ({ route, navigation }) => {
   const contacts = route?.params?.contacts;
   const activity = route?.params?.activity;
   const [images, setImages] = useState<ImageOrVideo[]>([]);
   let completed = false;
   const [showEdit, setShowEdit] = useState(false);
-  useEffect(
-    _ => {
-      if (activity.creater === 'me') {
-        setShowEdit(true);
-      }
-    },
-    [activity.creater],
-  );
+  useEffect(() => {
+    if (activity.creater === 'me') {
+      setShowEdit(true);
+    }
+  }, [activity.creater]);
   const deletePhoto = item => {
     const arr = images.filter(img => img.path !== item);
     setImages(arr);
   };
   const listItems = images.map((img, index) => (
-    <View key={index} style={{width: '23%', marginHorizontal: '1%'}}>
+    <View key={index} style={{ width: '23%', marginHorizontal: '1%' }}>
       <TouchableNativeFeedback
         onPress={() => {
           navigation.navigate({
             name: 'ViewImage',
-            params: {images: images, curImage: index},
+            params: { images: images, curImage: index },
           });
         }}>
         <Image
@@ -53,7 +50,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
           }}
           source={{
             uri: img.path,
-            headers: {Authorization: 'someAuthToken'},
+            headers: { Authorization: 'someAuthToken' },
           }}
           resizeMode="cover"
         />
@@ -74,7 +71,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
     </View>
   ));
   return (
-    <View style={{flex: 1, backgroundColor: '#333'}}>
+    <View style={{ flex: 1, backgroundColor: '#333' }}>
       <StatusBar hidden={true} />
       <ImageBackground
         source={{
@@ -85,7 +82,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
           <View
             style={[
               styles.rowContainer,
-              {marginTop: 15, justifyContent: 'space-between'},
+              { marginTop: 15, justifyContent: 'space-between' },
             ]}>
             <Icon
               size={20}
@@ -123,7 +120,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
                   name="pencil"
                   type="octicon"
                   color="#181818"
-                  style={{marginRight: 25}}
+                  style={{ marginRight: 25 }}
                 />
               )}
               <Icon
@@ -134,7 +131,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
               />
             </View>
           </View>
-          <View style={[styles.rowContainer, {marginTop: 10}]}>
+          <View style={[styles.rowContainer, { marginTop: 10 }]}>
             <View>
               <Text
                 style={{
@@ -146,14 +143,14 @@ const Activity: React.FC<any> = ({route, navigation}) => {
                 {activity.title}
               </Text>
             </View>
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Icon name="island" type="fontisto" color="#FF5959" />
             </View>
           </View>
           <View
             style={[
               styles.rowContainer,
-              {justifyContent: 'space-between', marginTop: 10},
+              { justifyContent: 'space-between', marginTop: 10 },
             ]}>
             <View style={styles.rowContainer}>
               <Avatar
@@ -163,10 +160,14 @@ const Activity: React.FC<any> = ({route, navigation}) => {
                     'https://images.pexels.com/photos/7473286/pexels-photo-7473286.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
                 }}
               />
-              <View style={[styles.rowContainer, {marginLeft: 10}]}>
+              <View style={[styles.rowContainer, { marginLeft: 10 }]}>
                 <Text>hosted by</Text>
                 <Text
-                  style={{marginLeft: 5, fontWeight: '700', color: '#39817F'}}>
+                  style={{
+                    marginLeft: 5,
+                    fontWeight: '700',
+                    color: '#39817F',
+                  }}>
                   {activity.creater}
                 </Text>
               </View>
@@ -175,7 +176,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
               <View
                 style={[
                   styles.rowContainer,
-                  {position: 'absolute', right: 5, top: -40},
+                  { position: 'absolute', right: 5, top: -40 },
                 ]}>
                 <TimeCircle
                   remainTime={144000}
@@ -185,7 +186,8 @@ const Activity: React.FC<any> = ({route, navigation}) => {
               </View>
             )}
           </View>
-          <View style={[styles.rowContainer, {marginTop: 8, paddingLeft: 10}]}>
+          <View
+            style={[styles.rowContainer, { marginTop: 8, paddingLeft: 10 }]}>
             <Icon
               name="map-marker-alt"
               type="font-awesome-5"
@@ -193,12 +195,16 @@ const Activity: React.FC<any> = ({route, navigation}) => {
               color="#CDCDCD"
             />
             <Text
-              style={{marginHorizontal: 10, color: '#C0C0C0', marginLeft: 20}}>
+              style={{
+                marginHorizontal: 10,
+                color: '#C0C0C0',
+                marginLeft: 20,
+              }}>
               Central Park
             </Text>
           </View>
-          <View style={{marginTop: 5}}>
-            <Text style={{lineHeight: 20, fontSize: 14, color: '#171E2A'}}>
+          <View style={{ marginTop: 5 }}>
+            <Text style={{ lineHeight: 20, fontSize: 14, color: '#171E2A' }}>
               Lorem ipsum dolor sit amet consectetur, adipisicing elit. Est
               molestias repellendus tempore assumenda sunt consequatur, quasi
               odit id, alias quae minima, consectetur eligendi non sed corrupti
@@ -206,13 +212,13 @@ const Activity: React.FC<any> = ({route, navigation}) => {
             </Text>
           </View>
           <Divider
-            style={{backgroundColor: '#EEEEEE', marginTop: 5, height: 2}}
+            style={{ backgroundColor: '#EEEEEE', marginTop: 5, height: 2 }}
           />
           <ScrollView
-            style={{marginTop: 10, marginHorizontal: 10, maxHeight: 160}}
+            style={{ marginTop: 10, marginHorizontal: 10, maxHeight: 160 }}
             contentContainerStyle={[
               styles.rowContainer,
-              {flexWrap: 'wrap', justifyContent: 'flex-start'},
+              { flexWrap: 'wrap', justifyContent: 'flex-start' },
             ]}>
             {listItems}
             {!completed && (
@@ -252,9 +258,9 @@ const Activity: React.FC<any> = ({route, navigation}) => {
               </View>
             )}
           </ScrollView>
-          <Divider style={{backgroundColor: '#EEEEEE', height: 2}} />
-          <View style={[styles.rowContainer, {marginTop: 5}]}>
-            <Text style={{color: '#A2AAB9'}}>Participants</Text>
+          <Divider style={{ backgroundColor: '#EEEEEE', height: 2 }} />
+          <View style={[styles.rowContainer, { marginTop: 5 }]}>
+            <Text style={{ color: '#A2AAB9' }}>Participants</Text>
           </View>
           <View
             style={{
@@ -279,14 +285,14 @@ const Activity: React.FC<any> = ({route, navigation}) => {
                   onPress={() => {
                     navigation.navigate({
                       name: 'AddContact',
-                      params: {screen: 'Activity'},
+                      params: { screen: 'Activity' },
                       merge: true,
                     });
                   }}
                 />
               </View>
             )}
-            <View style={{marginLeft: 10}}>
+            <View style={{ marginLeft: 10 }}>
               <Avatar
                 size={40}
                 rounded
@@ -296,22 +302,20 @@ const Activity: React.FC<any> = ({route, navigation}) => {
                 }}
               />
             </View>
-            {contacts?.map((contact, index) => (
-              contact.picture === '' ? 
-              (<NameAvatar
-                key={index}
-                name={contact.name}
-                color={'#D3DCE6'}
-                style={{marginLeft: 10}}
-              />) : 
-              (<View style={{marginLeft: 10}} key={index}>
-                <Avatar
-                  size={40}
-                  rounded
-                  source={{uri:contact.picture}}
+            {contacts?.map((contact, index) =>
+              contact.picture === '' ? (
+                <NameAvatar
+                  key={index}
+                  name={contact.name}
+                  color={'#D3DCE6'}
+                  style={{ marginLeft: 10 }}
                 />
-              </View>)
-            ))}
+              ) : (
+                <View style={{ marginLeft: 10 }} key={index}>
+                  <Avatar size={40} rounded source={{ uri: contact.picture }} />
+                </View>
+              ),
+            )}
           </View>
         </View>
       </ImageBackground>
@@ -337,7 +341,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
             borderWidth: 0,
             backgroundColor: '#39817E',
           }}
-          titleStyle={{color: '#F3F8F7'}}
+          titleStyle={{ color: '#F3F8F7' }}
           title="Share"
         />
         <Button
@@ -350,7 +354,7 @@ const Activity: React.FC<any> = ({route, navigation}) => {
             borderRadius: 5,
             backgroundColor: '#39817E',
           }}
-          titleStyle={{color: '#F3F8F7'}}
+          titleStyle={{ color: '#F3F8F7' }}
           title="Not this time"
           onPress={() => navigation.goBack()}
         />

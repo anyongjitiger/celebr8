@@ -1,8 +1,6 @@
 import React from 'react';
-// export { default as DateTimePicker } from '@react-native-community/datetimepicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { themes, useTheme } from '@themes';
-import { Input, Icon, Platform, TouchableHighlight } from '@components';
+import { Input, Icon, TouchableHighlight } from '@components';
 import { useState } from '@hooks';
 
 const DatePicker: React.FC<TProp> = ({ dateConfig, ...Props }) => {
@@ -14,8 +12,9 @@ const DatePicker: React.FC<TProp> = ({ dateConfig, ...Props }) => {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+    // setShow(Platform.OS === 'ios');
     setDate(currentDate);
+    setShow(false);
     Props.onChangeText(currentDate);
   };
 
@@ -43,7 +42,9 @@ const DatePicker: React.FC<TProp> = ({ dateConfig, ...Props }) => {
             <Icon type="material-community" name="calendar" color="gray" />
           }
           editable={false}
-          value={date.toLocaleDateString()}></Input>
+          value={date.toLocaleDateString()}
+          inputContainerStyle={{ height: 40 }}
+        />
         {show && (
           <DateTimePicker
             testID="dateTimePicker"
