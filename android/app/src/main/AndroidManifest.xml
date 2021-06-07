@@ -25,20 +25,40 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize">
+
         <intent-filter>
           <action android:name="android.intent.action.MAIN" />
           <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
-        <intent-filter  android:autoVerify="true">
+
+        <intent-filter android:autoVerify="true">
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="https" android:host="xshlee.app.link" />
+            <data android:scheme="celebr8" android:host="feature" />
+        </intent-filter>
+
+        <!-- Branch App Links (optional) -->
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" android:host="celebr8.test-app.link" />
+            <!-- example-alternate domain is required for App Links when the Journeys/Web SDK and Deepviews are used inside your website.  -->
+            <data android:scheme="https" android:host="celebr8-alternate.test-app.link" />
         </intent-filter>
       </activity>
+
       <!-- Branch keys -->
         <!-- (Omit if setting keys in branch.json) -->
         <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_md5h4UnneoCeqDJkIHxiUdiaqEbkc8ax"/>
         <meta-data android:name="io.branch.sdk.BranchKey.test" android:value="key_test_na6c8LdchlvjuDHeSQtfXdanvDjlo0nN"/>
+        <meta-data android:name="io.branch.sdk.TestMode" android:value="true" />
+<!--        <receiver android:name="io.branch.referral." android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.android.vending.INSTALL_REFERRER"></action>-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+        <!-- Set to true to use Branch_Test_Key (useful when simulating installs and/or switching between debug and production flavors) -->
     </application>
 </manifest>

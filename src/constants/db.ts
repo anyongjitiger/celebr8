@@ -1,18 +1,14 @@
-// const TABLES = Object.freeze({
-import Activity from './../screens/activity';
-//   USER: "user"
-// })
 enum Table {
-  User = 'user',
   File = 'file',
+  Member = 'members',
   Experience = 'experience',
-  Participant = 'participant',
   ExpeType = 'expe_type',
   ExpeTypeMusic = 'expe_type_music',
+  Invite = 'invite',
   TEST = 'test'
 }
 
-enum Procedure {}
+enum Procedure { }
 
 enum ActivityType {
   Party = 1,
@@ -23,4 +19,4 @@ enum ActivityType {
   Others,
 }
 
-export {Table, Procedure, ActivityType};
+export { Table, Procedure, ActivityType };

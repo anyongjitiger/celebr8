@@ -1,7 +1,6 @@
 import React from 'react';
-
+import branch, { BranchEvent } from 'react-native-branch';
 import {
-  View,
   Button,
   Text,
   StyleSheet,
@@ -14,8 +13,8 @@ import {
   ListItem,
   DatePicker,
   TextArea,
+  FastImage,
 } from '@components';
-import { Platform } from 'react-native';
 import { useTranslation, useGlobal, useState } from '@hooks';
 import { useTheme, themes } from '@themes';
 import { UnderlayParams } from 'react-native-swipeable-item';
@@ -36,6 +35,8 @@ import {
 import config from '@config';
 import { useNavigation } from '@react-navigation/core';
 import { RNFetchBlob } from '@helpers';
+
+import { Message } from '@services';
 
 const dirs = RNFetchBlob.fs.dirs;
 const styles = StyleSheet.create({
@@ -95,19 +96,6 @@ const renderUnderlayLeft = ({ item, percentOpen }: UnderlayParams<Item>) => (
   </>
 );
 
-// const Swipt: React.FC<any> = () => {
-//   return (
-//     <SwipeableItem
-//       overSwipe={100}
-//       renderUnderlayLeft={renderUnderlayLeft}
-//       snapPointsLeft={[50, 100, 150]}>
-//       <View>
-//         <Button title="hello"></Button>
-//       </View>
-//     </SwipeableItem>
-//   );
-// };
-
 const HelloWorld: React.FC<any> = () => {
   const { token } = getGlobal();
   const [, setToken] = useGlobal('token');
@@ -142,7 +130,7 @@ const HelloWorld: React.FC<any> = () => {
     ImagePicker.openPicker({
       multiple: true,
     }).then(imgs => {
-      console.log('imgs', imgs);
+      console.log('select imgs==>', imgs);
       setImages(imgs);
     });
   };
@@ -150,9 +138,12 @@ const HelloWorld: React.FC<any> = () => {
   const onUpload = () => {
     console.log('images', images);
     fileFetch
-      .upload(images, {
-        progress: (pre: number) => {},
-      })
+      .uploadExepImgs(
+        { file: images, expe_id: 1 },
+        {
+          progress: (pre: number) => {},
+        },
+      )
       .then(res => {
         // const [err, data] = res;
         // console.log('upload res', err, data);
@@ -280,17 +271,111 @@ const HelloWorld: React.FC<any> = () => {
     });
   }
 
+  const [
+    branchUniversalObject,
+    setBranchUniversalObject,
+  ] = useState<BranchUniversalObject>({});
+
+  `/**for refreed deep link */`;
+
+  async function createDeeplink() {
+    // only canonicalIdentifier is required
+    let branchUniversalObject = await branch.createBranchUniversalObject(
+      'canonicalIdentifier',
+      {
+        locallyIndex: true,
+        title: 'Cool Content!',
+        contentDescription: 'Cool Content Description',
+        contentMetadata: {
+          ratingAverage: 4.2,
+          customMetadata: {
+            method: 'invite',
+            content: 'exep_id',
+          },
+        },
+      },
+    );
+
+    setBranchUniversalObject(branchUniversalObject);
+
+    console.log('branchUniversalObject==>>', branchUniversalObject);
+
+    let linkProperties = {
+      feature: 'invite',
+      content: 'exep_id',
+    };
+
+    let controlParams = {
+      $android_url: 'celebr8://feature',
+      $ios_url: 'celebr8://feature',
+    };
+
+    const { url } = await branchUniversalObject.generateShortUrl(
+      linkProperties,
+      controlParams,
+    );
+
+    console.log('deep link url', url);
+  }
+
+  async function shareDeeplink() {
+    let shareOptions = {
+      messageHeader: 'Check this out',
+      messageBody: 'No really, check this out!',
+    };
+    let linkProperties = { feature: 'share', channel: 'RNApp' };
+    let controlParams = {
+      $desktop_url: 'http://example.com/home',
+      $ios_url: 'http://example.com/ios',
+    };
+    let {
+      channel,
+      completed,
+      error,
+    } = await branchUniversalObject.showShareSheet(
+      shareOptions,
+      linkProperties,
+      controlParams,
+    );
+
+    console.log(`channel, completed, error,`, channel, completed, error);
+  }
+
   return (
     <ScrollView style={theme.container}>
-      <TextArea></TextArea>
+      <Button
+        title="show Message"
+        onPress={() => {
+          Message.show({
+            description: 'hello title description',
+            message: 'hello world',           
+          });
+        }}></Button>
       <Divider style={styles.divider} />
-      <DatePicker onChangeText={date => {}} date={new Date()}></DatePicker>
+      <FastImage
+        style={{
+          flex: 1,
+          width: '100%',
+          height: 200,
+          borderWidth: 1,
+          borderRadius: 4,
+          borderColor: 'black',
+        }}
+        resizeMode={FastImage.resizeMode.contain}
+        onError={() => {
+          // console.error('onlaod  fast image error');
+        }}
+        onProgress={event => {
+          // console.log('on progress ====>', event);
+        }}
+        source={{
+          uri: `${config.API_URL}${API.FILE_DOWNLOAD}/32/19/91f696c2c5324714943b71a0cbdc0c9a.jpg`,
+          // uri: `https://tse2-mm.cn.bing.net/th/id/OIP.qkpZkUDyLIB3c5Uks8D1oAHaE8?w=237&h=180&c=7&o=5&pid=1.7`,
+        }}></FastImage>
       <Divider style={styles.divider} />
-      <Input
-        editable
-        multiline
-        numberOfLines={4}
-        label={<Lable label="hello *" />}></Input>
+      <Button title="Create DeepLink" onPress={createDeeplink}></Button>
+      <Divider style={styles.divider} />
+      <Button title="shareDeeplink" onPress={shareDeeplink}></Button>
       <Divider style={styles.divider} />
       <Input label={<Lable label="hello" />}></Input>
       <Button title="Get All Contacts" onPress={onGetAllContacts}></Button>
@@ -328,6 +413,15 @@ const HelloWorld: React.FC<any> = () => {
         onPress={() => {
           setToken('');
         }}></Button>
+      <TextArea></TextArea>
+      <Divider style={styles.divider} />
+      <DatePicker onChangeText={date => {}} date={new Date()}></DatePicker>
+      <Divider style={styles.divider} />
+      <Input
+        editable
+        multiline
+        numberOfLines={4}
+        label={<Lable label="hello *" />}></Input>
     </ScrollView>
   );
 };

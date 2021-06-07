@@ -10,9 +10,10 @@ import {
   Pressable,
   StatusBar,
 } from '@components';
-import {useGlobal} from '@hooks';
-const BadgedIcon = withBadge(5, {top: -4, right: -4})(Icon);
-const Profile: React.FC<any> = ({navigation}) => {
+import { useGlobal } from '@hooks';
+import { getGlobal } from '@services';
+const BadgedIcon = withBadge(5, { top: -4, right: -4 })(Icon);
+const Profile: React.FC<any> = ({ navigation }) => {
   const left = (
     <Icon
       size={25}
@@ -33,16 +34,17 @@ const Profile: React.FC<any> = ({navigation}) => {
     />
   );
   const [, setToken] = useGlobal('token');
+  const { user } = getGlobal();
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <StatusBar barStyle="light-content" />
       <Header
-        containerStyle={[{flexDirection: 'row-reverse'}, styles.rowContainer]}
+        containerStyle={[{ flexDirection: 'row-reverse' }, styles.rowContainer]}
         leftComponent={left}
-        centerComponent={{text: 'My Profile', style: {color: '#fff'}}}
-        centerContainerStyle={{alignSelf: 'center'}}
+        centerComponent={{ text: 'My Profile', style: { color: '#fff' } }}
+        centerContainerStyle={{ alignSelf: 'center' }}
         rightComponent={right}
-        rightContainerStyle={{alignSelf: 'center', marginRight: 10}}
+        rightContainerStyle={{ alignSelf: 'center', marginRight: 10 }}
       />
       <View
         style={{
@@ -60,15 +62,28 @@ const Profile: React.FC<any> = ({navigation}) => {
             // backfaceVisibility: 'visiable',
             backgroundColor: '#357F7E',
           }}>
-          <Avatar
+          {/* <Avatar
             rounded
             size={50}
             source={{
               uri:
                 'https://images.pexels.com/photos/7473286/pexels-photo-7473286.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
             }}
+          /> */}
+          <Icon
+            size={40}
+            name="person"
+            type="fontisto"
+            color="#333"
+            containerStyle={{
+              backgroundColor: 'white',
+              width: 60,
+              height: 60,
+              borderRadius: 30,
+              justifyContent: 'center',
+            }}
           />
-          <View style={[styles.rowContainer, styles.rowLine, {marginTop: 5}]}>
+          <View style={[styles.rowContainer, styles.rowLine, { marginTop: 5 }]}>
             <Text
               style={{
                 color: 'white',
@@ -77,17 +92,17 @@ const Profile: React.FC<any> = ({navigation}) => {
                 // textAlign: 'right',
                 lineHeight: 24,
               }}>
-              Tom Candy Halfman
+              {user?.username}
             </Text>
             <Icon
               size={20}
               name="pencil"
               type="octicon"
               color="white"
-              containerStyle={{position: 'relative', left: 15}}
+              containerStyle={{ position: 'relative', left: 15 }}
             />
           </View>
-          <View style={[styles.rowContainer, styles.rowLine, {marginTop: 2}]}>
+          <View style={[styles.rowContainer, styles.rowLine, { marginTop: 2 }]}>
             <Text
               style={{
                 color: 'white',
@@ -95,14 +110,14 @@ const Profile: React.FC<any> = ({navigation}) => {
                 fontWeight: '400',
                 lineHeight: 20,
               }}>
-              18848888888
+              {user?.phone}
             </Text>
             <Icon
               size={20}
               name="pencil"
               type="octicon"
               color="white"
-              containerStyle={{position: 'relative', left: 15}}
+              containerStyle={{ position: 'relative', left: 15 }}
             />
           </View>
         </View>
@@ -119,7 +134,7 @@ const Profile: React.FC<any> = ({navigation}) => {
               paddingVertical: 20,
               elevation: 4,
               shadowColor: '#000',
-              shadowOffset: {width: 2, height: 2},
+              shadowOffset: { width: 2, height: 2 },
               shadowOpacity: 0.5,
               shadowRadius: 3,
             },
@@ -131,7 +146,7 @@ const Profile: React.FC<any> = ({navigation}) => {
               flex: 1,
               alignItems: 'center',
             }}>
-            <Text style={{fontSize: 20, fontWeight: '700', color: '#3B4857'}}>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: '#3B4857' }}>
               42
             </Text>
             <Text
@@ -144,8 +159,8 @@ const Profile: React.FC<any> = ({navigation}) => {
               Hosted
             </Text>
           </View>
-          <View style={{flex: 1, alignItems: 'center'}}>
-            <Text style={{fontSize: 20, fontWeight: '700', color: '#3B4857'}}>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: '700', color: '#3B4857' }}>
               58
             </Text>
             <Text
@@ -168,9 +183,9 @@ const Profile: React.FC<any> = ({navigation}) => {
           <View
             style={[
               styles.rowContainer,
-              {justifyContent: 'space-between', paddingVertical: 5},
+              { justifyContent: 'space-between', paddingVertical: 5 },
             ]}>
-            <Text style={{fontSize: 16, fontWeight: '600', lineHeight: 24}}>
+            <Text style={{ fontSize: 16, fontWeight: '600', lineHeight: 24 }}>
               Report/Feedback
             </Text>
             <Icon
@@ -183,9 +198,9 @@ const Profile: React.FC<any> = ({navigation}) => {
           <View
             style={[
               styles.rowContainer,
-              {justifyContent: 'space-between', paddingVertical: 5},
+              { justifyContent: 'space-between', paddingVertical: 5 },
             ]}>
-            <Text style={{fontSize: 16, fontWeight: '600', lineHeight: 24}}>
+            <Text style={{ fontSize: 16, fontWeight: '600', lineHeight: 24 }}>
               Privacy
             </Text>
             <Icon
@@ -195,16 +210,16 @@ const Profile: React.FC<any> = ({navigation}) => {
               color="#181818"
             />
           </View>
-          <View style={{paddingVertical: 5}}>
+          <View style={{ paddingVertical: 5 }}>
             <Pressable
               onPress={() => {
                 navigation.goBack();
               }}
-              style={({pressed}) => ({
+              style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
               <Text
-                style={{fontSize: 16, fontWeight: '600', lineHeight: 24}}
+                style={{ fontSize: 16, fontWeight: '600', lineHeight: 24 }}
                 onPress={() => {
                   setToken('');
                 }}>

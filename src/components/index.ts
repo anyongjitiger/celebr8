@@ -22,7 +22,7 @@ export {
   KeyboardAvoidingView,
   Touchable,
   TouchableHighlight,
-  Linking
+  Linking,
 } from 'react-native';
 
 export {
@@ -75,3 +75,5 @@ export { default as AppleStyleSwipeableRow } from './AppleStyleSwipeableRow';
 export { default as FastImage } from 'react-native-fast-image';
 export { default as DatePicker } from './date-time-picker';
 export { default as TextArea } from './text-area';
+export { default as ActivityIcon } from './activity-icon';
+export { default as FlashMessage } from 'react-native-flash-message';

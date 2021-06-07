@@ -1,8 +1,8 @@
 import axios from 'axios';
 import config from '@config';
-import qs from "qs";
-import { getGlobal } from "@services";
-import { AxiosRequestConfig, AxiosResponse, AxiosError } from "@types";
+import qs from 'qs';
+import { getGlobal } from '@services';
+import { AxiosRequestConfig, AxiosResponse, AxiosError } from '@types';
 
 const requestConfig = {
   baseURL: config.API_URL,
@@ -10,31 +10,33 @@ const requestConfig = {
   responseType: 'json',
   responseEncoding: 'utf8',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-}
+};
 
 const client = axios.create(<AxiosRequestConfig>requestConfig);
 export const apiRequest = client.request;
 
 client.interceptors.request.use((preRequestConfig: AxiosRequestConfig) => {
-  console.warn(preRequestConfig);
-
   const { token } = getGlobal();
-  preRequestConfig.headers['Token'] = token;
+  preRequestConfig.headers.Token = token;
   const contentType = preRequestConfig.headers['Content-Type'] + '';
-  if (contentType.includes('application/x-www-form-urlencoded') && preRequestConfig.data) {
+  if (
+    contentType.includes('application/x-www-form-urlencoded') &&
+    preRequestConfig.data
+  ) {
     const _d = qs.stringify(preRequestConfig.data);
-    preRequestConfig.data = _d
+    preRequestConfig.data = _d;
   }
-  return preRequestConfig
-})
+  return preRequestConfig;
+});
 
-client.interceptors.response.use((response: AxiosResponse): any => {
-  // if (!data.success) {
-  //   return [data.error, null, response];
-  // }A
-  // return [null, data, response];
-  return response;
-},
+client.interceptors.response.use(
+  (response: AxiosResponse): any => {
+    // if (!data.success) {
+    //   return [data.error, null, response];
+    // }A
+    // return [null, data, response];
+    return response;
+  },
   async (axiosError: AxiosError) => {
     // Handle UNAUTHORIZED error.W
     // if (get(error, 'response.status') === httpCodes.UNAUTHORIZED) {
@@ -53,11 +55,15 @@ client.interceptors.response.use((response: AxiosResponse): any => {
     //     response: error.response,
     //   },
     // })
-    console.error(axiosError.response)
-    const { error = "unknow error" } = axiosError.response?.data;
-    return Promise.reject([decodeURIComponent(error), null, axiosError.response])
-  }
-)
+    console.error(axiosError.response);
+    const { error = 'unknow error' } = axiosError.response?.data;
+    return Promise.reject([
+      decodeURIComponent(error),
+      null,
+      axiosError.response,
+    ]);
+  },
+);
 
 // const refreshToken = async (originalRequest: AxiosRequestConfig) => {
 //   try {
@@ -75,16 +81,19 @@ client.interceptors.response.use((response: AxiosResponse): any => {
 
 const promiseify = function (api: Function) {
   return (...params: any) =>
-    api(...params).then((response: AxiosResponse) => {
-      const { data } = response;
-      if (data.success) {
-        return [null, data, response];
-      }
-      return [data.error, null, response];
-    }, (error: any) => {
-      return error
-    });
-}
+    api(...params).then(
+      (response: AxiosResponse) => {
+        const { data } = response;
+        if (data.success) {
+          return [null, data, response];
+        }
+        return [data.error, null, response];
+      },
+      (error: any) => {
+        return error;
+      },
+    );
+};
 
 const apiClient = {
   ins: client,
@@ -95,6 +104,6 @@ const apiClient = {
   post: promiseify(client.post),
   delete: promiseify(client.delete),
   request: promiseify(client.request),
-}
+};
 
 export default apiClient;

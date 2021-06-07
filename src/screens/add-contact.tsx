@@ -60,7 +60,6 @@ const AddContact: React.FC<any> = ({ route, navigation }) => {
   }
 
   const onChecked = (item: TContact) => {
-    console.log('on checked...');
     const checked = selectList.findIndex(c => c.id === item.id) > -1;
     return checked;
   };
@@ -177,6 +176,9 @@ const AddContact: React.FC<any> = ({ route, navigation }) => {
         <>
           {filteredUsers.map((item, index) => (
             <ListItem
+              onPress={() => {
+                onSelected(item);
+              }}
               key={index}
               containerStyle={{
                 paddingHorizontal: 0,
@@ -185,9 +187,6 @@ const AddContact: React.FC<any> = ({ route, navigation }) => {
               }}>
               <ListItem.CheckBox
                 checked={onChecked(item)}
-                onPress={() => {
-                  onSelected(item);
-                }}
                 containerStyle={{
                   borderWidth: 0,
                   marginHorizontal: 0,

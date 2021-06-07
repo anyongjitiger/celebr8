@@ -11,7 +11,7 @@ const HomeHeader: React.FC<any> = ({...restProps}) => {
       rounded
       source={{
         uri:
-          'https://s33.limill.cn/wp-content/uploads/2021/03/p2628052135-1.jpg',
+          'https://images.pexels.com/photos/7473286/pexels-photo-7473286.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=50',
       }}
       onPress={() => navigation.navigate('Profile')}
     />

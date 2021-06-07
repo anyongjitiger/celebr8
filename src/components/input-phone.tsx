@@ -1,16 +1,16 @@
 import React from 'react';
-import { useTranslation, useState } from '@hooks';
+import { useTranslation } from '@hooks';
 import { themes, useTheme } from '../themes';
 import { Input } from '@components';
 import parsePhoneNumber from 'libphonenumber-js/mobile';
 import { Keyboard } from '@helpers';
-const PhoneInput: React.FC<any> = ({ onChangeText = () => {}, ...props }) => {
-  const [phone, setPhone] = useState('');
-
+const PhoneInput: React.FC<TProps> = ({
+  onChangeText = () => {},
+  ...props
+}) => {
   const onChangePhone = (txt = '') => {
+    txt = txt.indexOf('+') === 0 ? txt : '+1' + txt;
     const phoneNumber = parsePhoneNumber(txt);
-
-    // console.log('isValid', phoneNumber?.isValid());
 
     if (phoneNumber?.isValid()) {
       Keyboard.dismiss();
@@ -35,7 +35,7 @@ const PhoneInput: React.FC<any> = ({ onChangeText = () => {}, ...props }) => {
 type TProps = {
   label?: string;
   phone?: string;
-  onChange?: Function;
+  onChangeText?: (phone: string | boolean) => {};
 };
 
 export default PhoneInput;

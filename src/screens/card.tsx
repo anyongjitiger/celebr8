@@ -1,9 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, Card, Avatar, Icon } from '@components';
-import { TimeCircle, Svg } from '@components';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Card,
+  Avatar,
+  TimeCircle,
+  ActivityIcon,
+} from '@components';
 import FacePile from 'react-native-face-pile';
 import FastImage from 'react-native-fast-image';
-import { ActivityType } from '@constants';
+import config from '@config';
+import { getGlobal } from '@services';
 
 const imgBase =
   'https://www.yinfans.me/wp-content/uploads/2021/01/p2628328069.jpg';
@@ -34,58 +42,24 @@ const user = {
   image: imgBase,
   avatar: imgBase,
 };
-const ActivityCard: React.FC<any> = ({ navigation, ...restProps }) => {
-  const { img, creater, type, title, remainTime, duration } = restProps.user;
-  const icon = () => {
-    switch (type) {
-      case ActivityType.Birthday:
-        return (
-          <Icon
-            name="birthday-cake"
-            type="font-awesome"
-            color="#F1C40F"
-            size={14}
-          />
-        );
-      case ActivityType.Wedding:
-        return <Svg icon="wedding-rings" size="14" color="#E84C3D" />;
-      case ActivityType.Party:
-        return (
-          <Icon
-            name="glass-cheers"
-            type="font-awesome-5"
-            color="#E77E23"
-            size={14}
-          />
-        );
-      case ActivityType.Trip:
-        return <Icon name="island" type="fontisto" color="#2CCB6F" size={14} />;
-      case ActivityType.Meeting:
-        return (
-          <Icon name="users" type="font-awesome" color="#E84C3D" size={14} />
-        );
-      case ActivityType.Others:
-        return (
-          <Icon
-            name="border-all"
-            type="font-awesome-5"
-            color="#9955B3"
-            size={14}
-          />
-        );
-      default:
-        return (
-          <Icon name="beer" type="font-awesome" color="#9955B3" size={14} />
-        );
-    }
-  };
+const ActivityCard: React.FC<any> = ({ ...restProps }) => {
+  const {
+    file_path,
+    owner,
+    expe_type,
+    title,
+    descr,
+    username,
+    remainTime = 3600 * 28,
+    duration = 3600 * 48,
+  } = restProps.user;
   return (
     <>
       <Card containerStyle={styles.card} wrapperStyle={styles.cardWrapper}>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flex: 1 }}>
             <View style={{ justifyContent: 'flex-start' }}>
-              {creater === 'me' ? (
+              {owner === getGlobal().user.id ? (
                 <View
                   style={[
                     {
@@ -126,7 +100,7 @@ const ActivityCard: React.FC<any> = ({ navigation, ...restProps }) => {
                             fontWeight: '700',
                             maxWidth: 80,
                           }}>
-                          {creater}
+                          {username}
                         </Text>
                       </View>
                     </View>
@@ -168,7 +142,7 @@ const ActivityCard: React.FC<any> = ({ navigation, ...restProps }) => {
               resizeMode={FastImage.resizeMode.cover}
               style={{ width: '100%', height: 160 }}
               source={{
-                uri: img,
+                uri: `${config.IMG_URL}${file_path}`,
                 headers: { Authorization: 'someAuthToken' },
                 priority: FastImage.priority.normal,
               }}
@@ -187,15 +161,13 @@ const ActivityCard: React.FC<any> = ({ navigation, ...restProps }) => {
               }}>
               {title}
             </Text>
-            {icon()}
+            <ActivityIcon type={expe_type} size={14} />
           </View>
           <Text
             style={[{ fontSize: 12, color: '#3B4857' }, styles.lightFont]}
             numberOfLines={2}
             ellipsizeMode={'tail'}>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Itaque
-            deleniti harum, fugit ad dolor veniam commodi at officiis, vel totam
-            non vitae hic aliquam unde eos animi! Iusto, illum officiis.
+            {descr}
           </Text>
         </View>
       </Card>

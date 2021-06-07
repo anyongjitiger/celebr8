@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker';
+import ImagePicker, { Image } from 'react-native-image-crop-picker';
+import { Experience, getGlobal } from '@services';
+import { TExperience } from '@types';
+import config from '@config';
+import {
+  Placeholder,
+  PlaceholderMedia,
+  PlaceholderLine,
+  Fade,
+} from 'rn-placeholder';
 import {
   Text,
   View,
   StyleSheet,
   ScrollView,
-  Image,
-  TouchableNativeFeedback,
+  Pressable,
   ImageBackground,
   Icon,
   Avatar,
@@ -15,33 +23,91 @@ import {
   NameAvatar,
   StatusBar,
   Divider,
+  ActivityIcon,
+  Platform,
 } from '@components';
+import FastImage from 'react-native-fast-image';
 
 const Activity: React.FC<any> = ({ route, navigation }) => {
   const contacts = route?.params?.contacts;
-  const activity = route?.params?.activity;
-  const [images, setImages] = useState<ImageOrVideo[]>([]);
-  let completed = false;
+  const act = route?.params?.activity;
+  const [activity, setActivity] = useState<TExperience>();
+  const [images, setImages] = useState<Image[]>([]);
+  const [netImages, setNetImages] = useState<any>([]);
+  const [bgImage, setBgImage] = useState('');
+  const completed = false;
   const [showEdit, setShowEdit] = useState(false);
   useEffect(() => {
-    if (activity.creater === 'me') {
+    async function fetchData() {
+      const detail = await Experience.detail(act);
+      const acty: TExperience = detail[1].exep.list[0];
+      console.log(acty);
+      const _netImages = detail[1].images.list;
+      // const invites = detail[1].invites.list;
+      // const members = detail[1].members.list[0];
+      setActivity(acty);
+      setNetImages(
+        _netImages.map(v => {
+          return { ...v, path: `${config.IMG_URL}${v.file_path}` };
+        }),
+      );
+      const bgi = _netImages.find(value => {
+        return value.is_bgi === 1;
+      });
+      setBgImage(bgi?.file_path);
+      // ...
+    }
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const { user } = getGlobal();
+    if (activity?.owner === user?.id) {
       setShowEdit(true);
     }
-  }, [activity.creater]);
+  }, [activity]);
   const deletePhoto = item => {
     const arr = images.filter(img => img.path !== item);
     setImages(arr);
   };
-  const listItems = images.map((img, index) => (
+  const netImageList = netImages.map((img: any, index) => (
     <View key={index} style={{ width: '23%', marginHorizontal: '1%' }}>
-      <TouchableNativeFeedback
+      <Pressable
         onPress={() => {
           navigation.navigate({
             name: 'ViewImage',
-            params: { images: images, curImage: index },
+            params: { images: netImages.concat(images), curImage: index },
           });
         }}>
-        <Image
+        <FastImage
+          resizeMode={FastImage.resizeMode.cover}
+          style={{
+            width: '100%',
+            height: 60,
+            borderRadius: 8,
+            marginVertical: 10,
+          }}
+          source={{
+            uri: img?.path,
+            priority: FastImage.priority.normal,
+          }}
+        />
+      </Pressable>
+    </View>
+  ));
+  const listItems = images.map((img, index) => (
+    <View key={index} style={{ width: '23%', marginHorizontal: '1%' }}>
+      <Pressable
+        onPress={() => {
+          navigation.navigate({
+            name: 'ViewImage',
+            params: {
+              images: netImages.concat(images),
+              curImage: netImages.length + index,
+            },
+          });
+        }}>
+        <FastImage
+          resizeMode={FastImage.resizeMode.cover}
           style={{
             width: '100%',
             height: 60,
@@ -50,11 +116,10 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
           }}
           source={{
             uri: img.path,
-            headers: { Authorization: 'someAuthToken' },
+            priority: FastImage.priority.normal,
           }}
-          resizeMode="cover"
         />
-      </TouchableNativeFeedback>
+      </Pressable>
       <Icon
         name="window-close"
         type="font-awesome"
@@ -63,6 +128,7 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
         containerStyle={{
           position: 'absolute',
           borderTopRightRadius: 8,
+          zIndex: 1,
           right: 0,
           top: 10,
         }}
@@ -75,10 +141,10 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
       <StatusBar hidden={true} />
       <ImageBackground
         source={{
-          uri: activity.img,
+          uri: `${config.IMG_URL}${bgImage}`,
         }}
         style={styles.image}>
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <View
             style={[
               styles.rowContainer,
@@ -131,95 +197,127 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
               />
             </View>
           </View>
-          <View style={[styles.rowContainer, { marginTop: 10 }]}>
+          {activity === undefined && (
+            <Placeholder
+              Animation={Fade}
+              Right={props => (
+                <PlaceholderMedia
+                  {...props}
+                  style={[
+                    props.style,
+                    { width: 80, height: 80, borderRadius: 40 },
+                  ]}
+                />
+              )}
+              style={{ marginTop: 10 }}>
+              <PlaceholderLine width={40} />
+              <PlaceholderLine width={30} />
+              <PlaceholderLine width={20} />
+              <PlaceholderLine />
+              <PlaceholderLine />
+              <PlaceholderLine />
+            </Placeholder>
+          )}
+          {activity !== undefined && (
             <View>
-              <Text
-                style={{
-                  fontSize: 20,
-                  fontWeight: '700',
-                  maxWidth: 200,
-                  color: '#1D252F',
-                }}>
-                {activity.title}
-              </Text>
-            </View>
-            <View style={{ marginLeft: 10 }}>
-              <Icon name="island" type="fontisto" color="#FF5959" />
-            </View>
-          </View>
-          <View
-            style={[
-              styles.rowContainer,
-              { justifyContent: 'space-between', marginTop: 10 },
-            ]}>
-            <View style={styles.rowContainer}>
-              <Avatar
-                rounded
-                source={{
-                  uri:
-                    'https://images.pexels.com/photos/7473286/pexels-photo-7473286.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
-                }}
-              />
-              <View style={[styles.rowContainer, { marginLeft: 10 }]}>
-                <Text>hosted by</Text>
-                <Text
-                  style={{
-                    marginLeft: 5,
-                    fontWeight: '700',
-                    color: '#39817F',
-                  }}>
-                  {activity.creater}
-                </Text>
+              <View style={[styles.rowContainer, { marginTop: 10 }]}>
+                <View>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      fontWeight: '700',
+                      maxWidth: 200,
+                      color: '#1D252F',
+                    }}>
+                    {activity?.title}
+                  </Text>
+                </View>
+                <View style={{ marginLeft: 10 }}>
+                  <ActivityIcon type={activity?.expe_type} size={20} />
+                </View>
               </View>
-            </View>
-            {!completed && (
               <View
                 style={[
                   styles.rowContainer,
-                  { position: 'absolute', right: 5, top: -40 },
+                  { justifyContent: 'space-between', marginTop: 10 },
                 ]}>
-                <TimeCircle
-                  remainTime={144000}
-                  duration={3600 * 48}
-                  size={82}
-                />
+                <View style={styles.rowContainer}>
+                  <Avatar
+                    rounded
+                    source={{
+                      uri:
+                        'https://images.pexels.com/photos/7473286/pexels-photo-7473286.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
+                    }}
+                  />
+                  <View style={[styles.rowContainer, { marginLeft: 10 }]}>
+                    <Text>hosted by</Text>
+                    <Text
+                      style={{
+                        marginLeft: 5,
+                        fontWeight: '700',
+                        color: '#39817F',
+                      }}>
+                      {activity?.owner}
+                    </Text>
+                  </View>
+                </View>
+                {!completed && (
+                  <View
+                    style={[
+                      styles.rowContainer,
+                      { position: 'absolute', right: 5, top: -40 },
+                    ]}>
+                    <TimeCircle
+                      remainTime={144000}
+                      duration={3600 * 48}
+                      size={82}
+                    />
+                  </View>
+                )}
               </View>
-            )}
-          </View>
-          <View
-            style={[styles.rowContainer, { marginTop: 8, paddingLeft: 10 }]}>
-            <Icon
-              name="map-marker-alt"
-              type="font-awesome-5"
-              size={18}
-              color="#CDCDCD"
-            />
-            <Text
-              style={{
-                marginHorizontal: 10,
-                color: '#C0C0C0',
-                marginLeft: 20,
-              }}>
-              Central Park
-            </Text>
-          </View>
-          <View style={{ marginTop: 5 }}>
-            <Text style={{ lineHeight: 20, fontSize: 14, color: '#171E2A' }}>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Est
-              molestias repellendus tempore assumenda sunt consequatur, quasi
-              odit id, alias quae minima, consectetur eligendi non sed corrupti
-              culpa eaque molestiae aspernatur.
-            </Text>
-          </View>
+              <View
+                style={[
+                  styles.rowContainer,
+                  { marginTop: 8, paddingLeft: 10 },
+                ]}>
+                <Icon
+                  name="map-marker-alt"
+                  type="font-awesome-5"
+                  size={18}
+                  color="#CDCDCD"
+                />
+                <Text
+                  style={{
+                    marginHorizontal: 10,
+                    color: '#C0C0C0',
+                    marginLeft: 20,
+                  }}>
+                  {activity?.location}
+                </Text>
+              </View>
+              <View style={{ marginTop: 5 }}>
+                <Text
+                  style={{ lineHeight: 20, fontSize: 14, color: '#171E2A' }}>
+                  {activity?.descr}
+                </Text>
+              </View>
+            </View>
+          )}
           <Divider
             style={{ backgroundColor: '#EEEEEE', marginTop: 5, height: 2 }}
           />
-          <ScrollView
-            style={{ marginTop: 10, marginHorizontal: 10, maxHeight: 160 }}
-            contentContainerStyle={[
+          <View
+            style={[
               styles.rowContainer,
-              { flexWrap: 'wrap', justifyContent: 'flex-start' },
+              {
+                flexWrap: 'wrap',
+                justifyContent: 'flex-start',
+                marginTop: 10,
+                marginHorizontal: 0,
+                width: '100%',
+              },
             ]}>
+            {netImageList}
             {listItems}
             {!completed && (
               <View
@@ -241,13 +339,22 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
                   onPress={() => {
                     ImagePicker.openPicker({
                       multiple: true,
+                      maxFiles: 50,
                     })
                       .then(img => {
                         setImages(imgs => {
-                          const paths = imgs.map(p => p.path);
-                          return imgs.concat(
-                            img.filter(i => !paths.includes(i.path)),
-                          );
+                          if (Platform.OS === 'android') {
+                            const paths = imgs.map(p => p.path);
+                            return imgs.concat(
+                              img.filter(i => !paths.includes(i.path)),
+                            );
+                          } else if (Platform.OS === 'ios') {
+                            const sources = imgs.map(p => p.sourceURL);
+                            return imgs.concat(
+                              img.filter(i => !sources.includes(i.sourceURL)),
+                            );
+                          }
+                          return [];
                         });
                       })
                       .catch(e => {
@@ -257,8 +364,10 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
                 />
               </View>
             )}
-          </ScrollView>
-          <Divider style={{ backgroundColor: '#EEEEEE', height: 2 }} />
+          </View>
+          <Divider
+            style={{ backgroundColor: '#EEEEEE', height: 2, marginTop: 5 }}
+          />
           <View style={[styles.rowContainer, { marginTop: 5 }]}>
             <Text style={{ color: '#A2AAB9' }}>Participants</Text>
           </View>
@@ -317,7 +426,7 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
               ),
             )}
           </View>
-        </View>
+        </ScrollView>
       </ImageBackground>
 
       <View
@@ -326,7 +435,7 @@ const Activity: React.FC<any> = ({ route, navigation }) => {
           {
             width: '90%',
             position: 'absolute',
-            bottom: 15,
+            bottom: 35,
             justifyContent: 'space-between',
           },
         ]}>

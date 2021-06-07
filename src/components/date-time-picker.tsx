@@ -8,8 +8,6 @@ const DatePicker: React.FC<TProp> = ({ dateConfig, ...Props }) => {
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
 
-  console.log('Props', Props);
-
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     // setShow(Platform.OS === 'ios');

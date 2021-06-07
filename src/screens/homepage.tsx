@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,7 +9,9 @@ import {
   Icon,
   Text,
   Svg,
+  RefreshControl,
 } from '@components';
+import { Experience } from '@services';
 import { themes, useTheme } from '@themes';
 import { useTranslation, useGlobal } from '@hooks';
 import ActivityCard from './card';
@@ -23,7 +25,6 @@ const users = [
     id: '3ac68afc-c605-48d3-a4f8-fbd91aa97f63',
     creater: 'Tay Strathairn',
     title: "Tay Strathairn's Travel",
-    status: '1',
     type: ActivityType.Trip,
     remainTime: 3600 * 14,
     duration: 3600 * 48,
@@ -35,7 +36,6 @@ const users = [
     // creater: 'David Strathairn',
     creater: 'me',
     title: "Kate's Wedding",
-    status: '3',
     type: ActivityType.Wedding,
     remainTime: 3600 * 10,
     duration: 3600 * 72,
@@ -46,7 +46,6 @@ const users = [
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
     creater: 'Derrick Janis',
     title: "Derrick Janis's Travel",
-    status: '2',
     type: ActivityType.Trip,
     remainTime: 3600 * 19,
     duration: 3600 * 72,
@@ -57,7 +56,6 @@ const users = [
     id: '58694443-3da1-471f-bd96-145571e29d72',
     creater: 'Frances McDormand',
     title: "Frances McDormand's Birthday",
-    status: '4',
     type: ActivityType.Birthday,
     remainTime: 3600 * 18,
     duration: 3600 * 48,
@@ -68,7 +66,6 @@ const users = [
     id: '58694443-3da1-471f-bd96-145571e29d73',
     creater: 'Viggo Mortensen',
     title: "Frances McDormand's holiday",
-    status: '4',
     type: ActivityType.Others,
     remainTime: 3600 * 34,
     duration: 3600 * 72,
@@ -79,18 +76,29 @@ const users = [
     id: '58694443-3da1-471f-bd96-145571e29d74',
     creater: 'Liv Tyler',
     title: "Liv Tyler's movie",
-    status: '4',
     type: ActivityType.Party,
     remainTime: 3600 * 34,
     duration: 3600 * 48,
-    img: 'https://s33.limill.cn/wp-content/uploads/2021/03/p2628052135-1.jpg',
+    img:
+      'https://images.pexels.com/photos/3137890/pexels-photo-3137890.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
   },
 ];
 const Homepage: React.FC<any> = ({ navigation, ...restProps }) => {
   const [theme] = useTheme(themes);
   const [token, setToken] = useGlobal('token');
+  const [activityList, setActivityList] = useState();
+  const [refreshing, setRefreshing] = useState(false);
   const { t } = useTranslation();
   const refRBSheet = useRef();
+  const fetchData = useCallback(async () => {
+    setRefreshing(true);
+    const activities = await Experience.getList(1, 20);
+    setActivityList(activities[1].list.reverse());
+    setRefreshing(false);
+  }, []);
+  useEffect(() => {
+    fetchData();
+  }, []);
   const onPress = item => {
     navigation.navigate({
       name: 'Activity',
@@ -219,18 +227,25 @@ const Homepage: React.FC<any> = ({ navigation, ...restProps }) => {
     </View>
   );
   return (
-    <View style={{ paddingBottom: 90 }}>
+    <View>
       <StatusBar barStyle="dark-content" />
       <HomeHeader />
       <FlatList
-        data={users}
+        data={activityList}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        refreshControl={
+          <RefreshControl
+            colors={['#9Bd35A', '#689F38']}
+            refreshing={refreshing}
+            onRefresh={fetchData}
+          />
+        }
       />
       <Button
         containerStyle={{
           position: 'absolute',
-          bottom: 130,
+          top: 770,
           left: 0,
           right: 0,
           marginHorizontal: '20%',

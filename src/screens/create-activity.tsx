@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import ImagePicker, { ImageOrVideo } from 'react-native-image-crop-picker';
+import ImagePicker, { Image } from 'react-native-image-crop-picker';
 import {
+  ActivityIndicator,
   Text,
   View,
   StyleSheet,
   ScrollView,
-  Image,
-  TouchableNativeFeedback,
+  Platform,
+  Pressable,
   ImageBackground,
   Icon,
   Avatar,
@@ -17,82 +18,145 @@ import {
   TextInput,
   Select,
   DatePicker,
-  Svg,
+  ActivityIcon,
 } from '@components';
 import { themes } from '@themes';
 import { useTheme } from '@hooks';
-import { ActivityType } from '@constants';
+import FastImage from 'react-native-fast-image';
+import { Experience, getGlobal } from '@services';
+import { getFileName } from '@helpers';
+import { showMessage } from 'react-native-flash-message';
+// import { UploadParams } from '../file_fetch';
 
 const CreateActivity: React.FC<any> = ({ route, navigation }) => {
   const contacts = route?.params?.contacts;
   const activity = route?.params?.activity;
   const activityType = route?.params?.activityType;
   const [theme] = useTheme(themes);
-  const [images, setImages] = useState<ImageOrVideo[]>([]);
-  const [title, onChangeTitle] = useState('');
-  const [description, onChangeDescription] = useState('');
-  const [location, onChangeLocation] = useState('');
-  const [show, setShow] = useState(false);
-  const [arrow, setArrow] = useState('caret-down');
-
-  const icon = type => {
-    switch (type) {
-      case ActivityType.Birthday:
-        return (
-          <Icon
-            name="birthday-cake"
-            type="font-awesome"
-            color="#F1C40F"
-            size={20}
-          />
-        );
-      case ActivityType.Wedding:
-        return <Svg icon="wedding-rings" size="20" color="#E84C3D" />;
-      case ActivityType.Party:
-        return (
-          <Icon
-            name="glass-cheers"
-            type="font-awesome-5"
-            color="#E77E23"
-            size={20}
-          />
-        );
-      case ActivityType.Trip:
-        return <Icon name="island" type="fontisto" color="#2CCB6F" size={20} />;
-      case ActivityType.Meeting:
-        return (
-          <Icon name="users" type="font-awesome" color="#E84C3D" size={20} />
-        );
-      case ActivityType.Others:
-        return (
-          <Icon
-            name="border-all"
-            type="font-awesome-5"
-            color="#9955B3"
-            size={20}
-          />
-        );
-      default:
-        return (
-          <Icon name="beer" type="font-awesome" color="#9955B3" size={20} />
-        );
-    }
+  const [images, setImages] = useState<Image[]>([]);
+  const [title, setTitle] = useState('');
+  const [animating, setAnimating] = useState(false);
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [cover, setCover] = useState('');
+  // const [show, setShow] = useState(false);
+  const [date, setDate] = useState(new Date().getTime());
+  const [duration, setDuration] = useState(172800);
+  // const [arrow, setArrow] = useState('caret-down');
+  const saveDraft = () => {
+    setAnimating(true);
+    const { user } = getGlobal();
+    Experience.create({
+      owner: user?.id,
+      expe_type: activityType,
+      title: title,
+      descr: description,
+      create_date: date,
+      location: location,
+      is_publish: false,
+    }).then(async (res: any) => {
+      const [error, data] = res;
+      if (error) {
+        setAnimating(false);
+        showMessage({
+          message: 'Save failed!',
+          type: 'danger',
+        });
+        return;
+      }
+      const expe_id = data?.list?.id;
+      const pro = await Experience.upsetImages({
+        expe_id,
+        file: images,
+        del_files: '',
+        bgi_file: getFileName(cover),
+      });
+      if (!JSON.parse(pro.data).success) {
+        showMessage({
+          message: 'Upload photos failed!',
+          type: 'danger',
+        });
+        setAnimating(false);
+        return;
+      }
+      setAnimating(false);
+      showMessage({
+        message: 'Saved successfully！',
+        type: 'success',
+      });
+      navigation.navigate({
+        name: 'Homepage',
+      });
+    });
   };
-
+  const share = () => {
+    setAnimating(true);
+    const { user } = getGlobal();
+    Experience.create({
+      owner: user?.id,
+      expe_type: activityType,
+      title: title,
+      descr: description,
+      create_date: date,
+      location: location,
+      validity: duration,
+      is_publish: true,
+    }).then(async (res: any) => {
+      const [error, data] = res;
+      if (error) {
+        setAnimating(false);
+        showMessage({
+          message: 'Save failed!',
+          type: 'danger',
+        });
+        return;
+      }
+      const expe_id = data?.list?.id;
+      const pro = await Experience.upsetImages({
+        expe_id,
+        file: images,
+        del_files: '',
+        bgi_file: getFileName(cover),
+      });
+      if (!JSON.parse(pro.data).success) {
+        showMessage({
+          message: 'Upload photos failed!',
+          type: 'danger',
+        });
+        setAnimating(false);
+        return;
+      }
+      setAnimating(false);
+      showMessage({
+        message: 'Shared successfully！',
+        type: 'success',
+      });
+      navigation.navigate({
+        name: 'Homepage',
+      });
+    });
+  };
   const deletePhoto = item => {
+    if (item === cover) {
+      setCover('');
+    }
     const arr = images.filter(img => img.path !== item);
     setImages(arr);
   };
   const listItems = images.map((img, index) => (
     <View key={index} style={{ width: '23%', marginHorizontal: '1%' }}>
-      <TouchableNativeFeedback
+      <Pressable
+        onLongPress={() => {
+          setCover(img.path);
+        }}
         onPress={() => {
           navigation.navigate({
             name: 'ViewImage',
             params: { images: images, curImage: index },
           });
         }}>
-        <Image
+        <FastImage
+          resizeMode={FastImage.resizeMode.cover}
           style={{
             width: '100%',
             height: 60,
@@ -102,10 +166,10 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
           source={{
             uri: img.path,
             headers: { Authorization: 'someAuthToken' },
+            priority: FastImage.priority.normal,
           }}
-          resizeMode="cover"
         />
-      </TouchableNativeFeedback>
+      </Pressable>
       <Icon
         name="window-close"
         type="font-awesome"
@@ -114,11 +178,27 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
         containerStyle={{
           position: 'absolute',
           borderTopRightRadius: 8,
+          zIndex: 1,
           right: 0,
           top: 10,
         }}
         onPress={() => deletePhoto(img.path)}
       />
+      {cover === img.path && (
+        <Icon
+          name="check"
+          type="fontisto"
+          size={18}
+          color={'#2FCC72'}
+          containerStyle={{
+            position: 'absolute',
+            borderTopRightRadius: 8,
+            zIndex: 0,
+            left: 5,
+            top: 10,
+          }}
+        />
+      )}
     </View>
   ));
   return (
@@ -127,21 +207,49 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
       <ImageBackground
         source={{
           uri:
-            activity !== undefined
-              ? activity.img
+            cover !== ''
+              ? cover
               : 'data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNgYGBgAAAABQABh6FO1AAAAABJRU5ErkJggg==',
         }}
         style={styles.image}>
+        <Icon
+          size={30}
+          name="arrowleft"
+          type="antdesign"
+          color="white"
+          containerStyle={{
+            alignItems: 'flex-start',
+            paddingLeft: 20,
+            paddingTop: 20,
+          }}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
+        {animating && (
+          <ActivityIndicator
+            size="large"
+            animating={animating}
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
+              zIndex: 1,
+            }}
+          />
+        )}
         <ScrollView style={styles.container}>
           <View style={[styles.rowContainer, { marginTop: 10 }]}>
             <View style={styles.fieldSet}>
               <Text style={styles.legend}>Title *</Text>
               <TextInput
                 style={styles.input}
-                onChangeText={onChangeTitle}
+                onChangeText={setTitle}
                 value={title}
               />
-              {icon(activityType)}
+              <ActivityIcon type={activityType} size={20} />
             </View>
           </View>
           <View
@@ -150,10 +258,10 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               { justifyContent: 'space-between', marginTop: 10 },
             ]}>
             <View style={[styles.fieldSet, { height: 100 }]}>
-              <Text style={styles.legend}>Description *</Text>
+              <Text style={styles.legend}>Message to Invitees *</Text>
               <TextInput
                 style={[styles.input, { height: 100 }]}
-                onChangeText={onChangeDescription}
+                onChangeText={setDescription}
                 multiline
                 numberOfLines={4}
                 value={description}
@@ -163,7 +271,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
           <Divider
             style={{ backgroundColor: '#EEEEEE', marginTop: 10, height: 2 }}
           />
-          <Icon
+          {/* <Icon
             name={arrow}
             type="fontisto"
             size={15}
@@ -173,62 +281,55 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
               setShow(s => !s);
               setArrow(a => (a === 'caret-down' ? 'caret-up' : 'caret-down'));
             }}
-          />
-          {show && (
-            <View>
-              <View style={[styles.rowContainer]}>
-                <View style={styles.fieldSet}>
-                  <Text style={styles.legend}>Location name</Text>
-                  <TextInput
-                    style={styles.input}
-                    onChangeText={onChangeLocation}
-                    value={location}
-                  />
-                </View>
-              </View>
-              <View
-                style={[
-                  styles.rowContainer,
-                  { marginTop: 10, marginBottom: 5 },
-                ]}>
-                <View style={{ width: '48%' }}>
-                  <DatePicker
-                    dateConfig={{}}
-                    onChangeText={t => console.log(t)}
-                    date={new Date()}
-                  />
-                </View>
-                <View
-                  style={{
-                    width: '48%',
-                    alignSelf: 'flex-start',
-                    marginLeft: '4%',
-                  }}>
-                  <Select
-                    showIcon
-                    items={[
-                      { label: '48:00:00', value: '48' },
-                      { label: '24:00:00', value: '24' },
-                    ]}
-                    style={{
-                      iconContainer: {
-                        top: 8,
-                        right: '80%',
-                      },
-                      inputIOS: [
-                        theme.inputIOS,
-                        { paddingLeft: 45, height: 40 },
-                      ],
-                      inputAndroid: [
-                        theme.inputAndroid,
-                        { paddingLeft: 45, height: 40 },
-                      ],
-                    }}
-                  />
-                </View>
+          /> */}
+          <View>
+            <View style={[styles.rowContainer]}>
+              <View style={styles.fieldSet}>
+                <Text style={styles.legend}>Location name</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setLocation}
+                  value={location}
+                />
               </View>
             </View>
-          )}
+            <View
+              style={[styles.rowContainer, { marginTop: 10, marginBottom: 5 }]}>
+              <View style={{ width: '48%' }}>
+                <DatePicker
+                  dateConfig={{}}
+                  onChangeText={t => setDate(t.getTime())}
+                  date={new Date()}
+                />
+              </View>
+              <View
+                style={{
+                  width: '48%',
+                  alignSelf: 'flex-start',
+                  marginLeft: '4%',
+                }}>
+                <Select
+                  showIcon
+                  items={[
+                    { label: '48:00:00', value: '172800' },
+                    { label: '24:00:00', value: '86400' },
+                  ]}
+                  style={{
+                    iconContainer: {
+                      top: 8,
+                      right: '80%',
+                    },
+                    inputIOS: [theme.inputIOS, { paddingLeft: 45, height: 40 }],
+                    inputAndroid: [
+                      theme.inputAndroid,
+                      { paddingLeft: 45, height: 40 },
+                    ],
+                  }}
+                  onValueChange={v => setDuration(v)}
+                />
+              </View>
+            </View>
+          </View>
           <Divider style={{ backgroundColor: '#EEEEEE', height: 2 }} />
           <Text style={{ color: '#8492A5', marginTop: 10, fontWeight: '400' }}>
             Upload *
@@ -241,7 +342,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                 flexWrap: 'wrap',
                 justifyContent: 'flex-start',
                 marginTop: 10,
-                marginHorizontal: 10,
+                marginHorizontal: 0,
                 width: '100%',
               },
             ]}>
@@ -265,13 +366,22 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
                 onPress={() => {
                   ImagePicker.openPicker({
                     multiple: true,
+                    maxFiles: 50,
                   })
                     .then(img => {
                       setImages(imgs => {
-                        const paths = imgs.map(p => p.path);
-                        return imgs.concat(
-                          img.filter(i => !paths.includes(i.path)),
-                        );
+                        if (Platform.OS === 'android') {
+                          const paths = imgs.map(p => p.path);
+                          return imgs.concat(
+                            img.filter(i => !paths.includes(i.path)),
+                          );
+                        } else if (Platform.OS === 'ios') {
+                          const sources = imgs.map(p => p.sourceURL);
+                          return imgs.concat(
+                            img.filter(i => !sources.includes(i.sourceURL)),
+                          );
+                        }
+                        return [];
                       });
                     })
                     .catch(e => {
@@ -343,7 +453,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
           {
             width: '90%',
             position: 'absolute',
-            bottom: 15,
+            bottom: 35,
             backgroundColor: 'transparent',
             justifyContent: 'space-between',
           },
@@ -361,7 +471,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
           }}
           titleStyle={{ color: '#F3F8F7' }}
           title="Save as draft"
-          onPress={() => navigation.goBack()}
+          onPress={saveDraft}
         />
         <Button
           containerStyle={{
@@ -375,7 +485,7 @@ const CreateActivity: React.FC<any> = ({ route, navigation }) => {
           }}
           titleStyle={{ color: '#F3F8F7' }}
           title="Share"
-          onPress={() => navigation.goBack()}
+          onPress={share}
         />
       </View>
     </View>

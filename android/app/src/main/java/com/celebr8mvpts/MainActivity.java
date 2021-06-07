@@ -1,6 +1,8 @@
 package com.celebr8mvpts;
 
 import com.facebook.react.ReactActivity;
+import io.branch.rnbranch.*;
+import android.content.Intent;
 
 public class MainActivity extends ReactActivity {
 
@@ -12,4 +14,17 @@ public class MainActivity extends ReactActivity {
   protected String getMainComponentName() {
     return "Celebr8MVPTS";
   }
+
+   // Override onStart, onNewIntent:
+  @Override
+  protected void onStart() {
+    super.onStart();
+    RNBranchModule.initSession(getIntent().getData(), this);
+  }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+      super.onNewIntent(intent);
+      RNBranchModule.onNewIntent(intent);
+   }
 }

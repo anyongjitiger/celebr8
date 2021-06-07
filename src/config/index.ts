@@ -6,6 +6,7 @@ const default_config = Object.freeze({
   // FORM_ERROR,
   APP_NAME: 'celebr8',
   API_URL: 'https://vshrmu5xxg.execute-api.us-east-1.amazonaws.com/prod',
+  IMG_URL: 'https://cel-life-file.s3.us-east-2.amazonaws.com/',
   // API_URL_PROD: 'https://_',
   API_REQUEST_TIMEOUT: 25e3,
   SENTRY_DSN: 'https://364d916c2a82497ea4278ea5758f90d5@o486434.ingest.sentry.io/5543663',

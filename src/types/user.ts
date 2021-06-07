@@ -1,6 +1,6 @@
 type TUser = {
   id: number,
-  phone_number: string,
+  phone: string,
   username: string
 }
 export default TUser;

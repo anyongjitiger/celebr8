@@ -22,8 +22,7 @@ const query = (table: Table, query: QueryParams = {}) => {
  * @returns `[error,data:{list,params, success, total}]`
  */
 const insert = (table: Table, data: TableData) => {
-  const { id, ...rest } = data;
-  return apiClient.post(`/sync/${table}`, rest);
+  return apiClient.post(`/sync/${table}`, data);
 }
 
 /**
@@ -32,11 +31,10 @@ const insert = (table: Table, data: TableData) => {
  * @param query
  * @param data 
  * @returns `[error,data:{list,params, success, total}]`
- * @example dbFethc.update(tablenem, id, {field01:'xxx',field2:'xxxxx});
+ * @example dbFethc.update(tablenem, id, {field01:'xxx',field2:'xxxxx'});
  */
 const update = (table: Table, query: params, data: TableData) => {
-  const { id = '', ...rest } = data;
-  return apiClient.put(`/sync/${table}`, rest, { params: { query } });
+  return apiClient.put(`/sync/${table}`, data, { params: { query } });
 };
 
 /**
@@ -50,7 +48,8 @@ const remove = (table: Table, query: params) => {
 };
 
 // const proc = (proc: Procedure, params: []) => apiClient.post(`/sync/process`, { name: proc });
-type TableData = { id?: string | number, [param: string]: any };
+
+type TableData = { [param: string]: any };
 type params = { [field: string]: any }
 type QueryParams = {
   page?: number,

@@ -1,29 +1,30 @@
 import { RNFetchBlob } from '@helpers';
 import config from '@config';
-import { ImageOrVideo } from '@types';
+import { Image } from '@types';
 import { API } from '@constants';
 import { getGlobal, apiClient } from '@services';
 import { getFileName } from '@helpers';
-import { RNFetchBlobConfig } from 'rn-fetch-blob';
-
+import {
+  FetchBlobResponse,
+  RNFetchBlobConfig,
+  StatefulPromise,
+} from 'rn-fetch-blob';
 const url_upload = `${config.API_URL}${API.FILE_UPLOAD}`;
 const url_download = `${config.API_URL}${API.FILE_DOWNLOAD}`;
 
-type TFile = {
-  id?: number;
-  user_id: number;
+type UploadParams = {
   expe_id: number;
-  file_name: string;
-  uploda_date: number;
-}
+  file: Image[];
+  del_files?: string;
+  bgi_file?: string;
+};
 
-function upload(
-  files: ImageOrVideo | ImageOrVideo[] | any,
+function uploadExepImgs(
+  params: UploadParams,
   option?: UploadOption,
-) {
-  const { token } = getGlobal();
-
-  const data = files.map((file: ImageOrVideo) => {
+): StatefulPromise<FetchBlobResponse> {
+  const { token, user } = getGlobal();
+  const fileData = params.file.map((file: Image) => {
     return {
       name: 'file',
       filename: getFileName(file.path),
@@ -31,6 +32,18 @@ function upload(
       data: RNFetchBlob.wrap(file.path),
     };
   });
+  const bodys: any = [
+    { name: 'expe_id', data: params.expe_id },
+    { name: 'user_id', data: user?.id },
+    ...fileData,
+  ];
+
+  if (params.del_files) {
+    bodys.push({ name: 'del_files', data: params.del_files });
+  }
+  if (params.bgi_file) {
+    bodys.push({ name: 'bgi_file', data: params.bgi_file });
+  }
 
   return (
     RNFetchBlob.fetch(
@@ -40,60 +53,59 @@ function upload(
         Token: token || '*',
         'Content-Type': 'multipart/form-data',
       },
-      data,
+      bodys,
     )
       // listen to upload progress event, emit every 100ms
-      .uploadProgress({ interval: option?.interval || 100 }, (written, total) => {
-        console.log('uploaded', written / total);
-        option?.progress(+(written / total) * 100);
-      })
-      .then(res => {
-        const { data } = res;
-        console.log('upload response', res);
-        return res;
-      })
-      .catch(error => {
-        console.error('file uplaod error', error);
-        return [error, null];
-      })
+      .uploadProgress(
+        { interval: option?.interval || 100 },
+        (written, total) => {
+          console.log('uploaded', written / total);
+          option?.progress(+(written / total) * 100);
+        },
+      )
   );
 }
 
-function download(filename: string, option?: DownloadOption) {
+function download(filename: string, option?: DownloadOption): Promise<any> {
   const { token } = getGlobal();
   const headers = { Token: token || '*' };
   console.log('on download start!!!!');
+  return (
+    RNFetchBlob.config({ ...option?.config })
+      .fetch('get', `${url_download}/${filename}`, headers)
+      // listen to download progress event, every 10%
+      .progress({ count: option?.count || 10 }, (received, total) => {
+        const p = +((received / total) * 100).toFixed(0);
+        console.log(
+          'progress => ',
+          'received',
+          received,
+          'total',
+          total,
+          'percent',
+          p,
+          '%',
+        );
+        option?.progress(p, received, total);
+      })
+      .then(res => {
+        const state = res.info().status;
+        const {
+          data,
+          respInfo: { status },
+        } = res;
 
-  return RNFetchBlob
-    .config({ ...option?.config })
-    .fetch('get', `${url_download}/${filename}`, headers)
-    // listen to download progress event, every 10%
-    .progress({ count: option?.count || 10 }, (received, total) => {
-      const p = +(((received / total) * 100).toFixed(0));
-      console.log('progress => ', 'received', received, 'total', total, 'percent', p, '%');
-      option?.progress(p, received, total);
-    })
-    .then(res => {
-      const state = res.info().status;
-      const {
-        data,
-        respInfo: { status },
-      } = res;
-
-      if (status === 200) {
-        return [null, data, res];
-      }
-      const { error } = data;
-      return [error, null, res];
-    })
-    .catch((errorMessage: any) => {
-      console.error('file donwlaod error', errorMessage);
-      return [errorMessage, null];
-    })
-}
-
-function remove() {
-  return apiClient.post(API.FILE_REMOVE);
+        if (status === 200) {
+          return [null, data, res];
+        }
+        const { error } = data;
+        return [error, null, res];
+      })
+      .catch((errorMessage: any) => {
+        console.error('file donwlaod error', errorMessage);
+        return [errorMessage, null];
+      })
+  );
 }
 
 function getFileList(directory: string) {
@@ -106,12 +118,10 @@ type UploadOption = {
 };
 
 type DownloadOption = {
-  config: RNFetchBlobConfig,
+  config: RNFetchBlobConfig;
   count?: 1;
   progress(percent: number, received?: number, total?: number): void;
-  [params: string]: any
 };
 
-export type { UploadOption, DownloadOption };
-
-export default { upload, download, remove, getFileList };
+export type { UploadOption, DownloadOption, UploadParams };
+export default { uploadExepImgs, download, getFileList };
